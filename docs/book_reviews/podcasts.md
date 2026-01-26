@@ -24,3 +24,8 @@ But still a good listen
 
 Catch it at - https://www.wsj.com/tech/ai/artificial-the-openai-story-21587cbd
 
+### Richard Sutton - LLMs As A Dead End
+
+In this thought-provoking conversation on the Dwarkesh Podcast, Turing Award winner Richard Sutton argues why LLMs might be a dead end for true AGI due to their lack of "on-the-job" learning. He discusses the need for a new architecture that enables continual, experiential learning similar to biological intelligence. A must-listen for anyone interested in the future of Reinforcement Learning versus LLMs.
+
+Catch it at - https://www.dwarkeshpatel.com/p/richard-sutton

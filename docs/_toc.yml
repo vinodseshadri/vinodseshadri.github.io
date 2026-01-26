@@ -24,6 +24,8 @@ chapters:
     sections:
       - title: Building AI/ML Products for Data Scientists
         file: blogs/buildingai.md
+      - title: Evolution of ML Life Cycle
+        file: blogs/evolution_of_ml.md
   - title : Books and Podcasts I loved
     file: book_reviews/bookspodcasts
     sections:
@@ -31,8 +33,6 @@ chapters:
         file: book_reviews/podcasts.md
       - title: Books
         file: book_reviews/books.md
-  - title : Paper Reviews
-    file: paper_reviews/rlhf
   
 
 

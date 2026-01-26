@@ -2,25 +2,26 @@
 
 &#128512;
 
-My name is Vinod Seshadri and I have over 18 years of experience in the tech industry. Over the years I have worked in different technologies, with the last 7 years being concentrated on Machine Learning, Data Science and AI.
+My name is Vinod Seshadri and I have over 20 years of experience in the tech industry. Over the years I have worked in different technologies, with the last 8+ years being concentrated on Machine Learning, Data Science, and AI.
 
 &#129504;
 
-In this past 7 years I have experience in both building models and also in product ionizing them  and building machine learning platforms . I have donned the hats of both a data scientist and a Machine learning engineer.
+In the past 8+ years, I have gained expertise in building and productionizing models, architecting machine learning platforms, and leading Generative AI initiatives. I have served as both a Data Scientist and a Machine Learning Engineer.
 
-I am extremely hands-on in my daily work and use Python as my daily go to programming language.  
-I am well versed in cloud technologies and am a AWS certified machine learning specialist and solution architect. I have a patent in the field of reinforcement learning and have published a book chapter and also have helped build courses in collaboration with eminent institutes in India. 
+I am hands-on in my daily work and use Python as my primary programming language. 
+I am well versed in cloud technologies and am an AWS Certified Machine Learning Specialist and Solution Architect. I have a patent in the field of reinforcement learning and have published a book chapter on AI/ML methods for chemists. 
+
 :notebook:
-Some of the data science projects that I worked on included building an end to end customer churn prediction model for a huge printer subscription program , text based models for chat bot and product review and anomaly detection models for industrial sensors. 
+Some of the data science projects I worked on include building end-to-end customer churn prediction models for a massive printer subscription program, text-based models for chatbots, and anomaly detection models for industrial sensors. 
 
-For the past two years most of my experience has been around building  machine learning and MLOps platforms.
+For the past few years, my focus has shifted towards building Enterprise MLE platforms and high-scale Generative AI solutions.
 
 &#128047;
 
-Currently as part of Tiger Analytics , I am building a MLOps platform for a large insurance client. 
+Currently, as a **Senior Machine Learning Architect** at **Tiger Analytics**, I spearhead the development of Autonomous AI Agents and GenAI platforms.
 
-Here I am part of a team that is uses Amazon Web Services, Apache Airflow and host of other open source and inbuilt tools to build MLOps platform that is being adopted by more than 10 different teams.  We work across teams to productionize their use cases that varies across insurance domains using our platform. 
+Here, I lead teams utilizing **Google ADK, AWS Bedrock, and Multi-Agent Systems** to build production-grade AI solutions handling thousands of daily requests. My work involves designing robust architectures for high availability, optimizing latency, and driving the adoption of agentic AI across the enterprise.
 
-My personal responsibilities as a Lead ML Engineer there,nclude working with internal customers to understand the requirements , leading teams  and implementing various features to enhance the core platform.
+My responsibilities include architecting solutions, creating standardized agent development templates, and mentoring engineering teams to deliver impactful business value.
 
-Personally off late,I  am interested more into building MLOps Platforms and building solutions using LLMs and NLP.
+Personally, I am deeply interested in Agentic AI, LLM-as-a-Judge evaluation frameworks, and the future of autonomous systems.

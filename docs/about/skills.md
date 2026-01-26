@@ -4,24 +4,28 @@
 ### Languages
   * Python
   * SQL
-### Technologies
-  * Machine LearningDeep Learning
-  * XGBoost
-  * Time Series Analysis
-  * Microservices
-  * Data Engineering
-  * ML
-  * Platform engineering
-  * Large Language Models 
-  * MLOps
-### Tools
-  * Amazon Web Services (AWS)
-  * AWS Sage maker
-  *  SAP Data intelligence
-  *  IBM Watson
-  * Git
-  *  Pandas
-  * scikit-learn
-  *  NumPy
+### Agentic AI & GenAI
+  * Google ADK
+  * AWS Bedrock
+  * Multi-Agent Systems
+  * Autonomous Agents
+  * Prompt Engineering
+  * RAG (Retrieval Augmented Generation)
+  * LLM-as-a-Judge
+  * MCP (Model Context Protocol)
+
+### MLE & Cloud
+  * AWS (Lambda, SQS, Step Functions)
+  * AWS SageMaker
   * Apache Airflow
-  *  MLFlow
+  * MLFlow
+  * Snowflake
+  * Docker / Kubernetes
+  * CI/CD (GitHub Actions)
+
+### Languages & Frameworks
+  * Python (Advanced)
+  * PyTorch
+  * Pandas
+  * LightGBM
+  * SQL

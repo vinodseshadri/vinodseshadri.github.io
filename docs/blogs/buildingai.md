@@ -1,43 +1,43 @@
 # Building AI/ML Products for Data Scientists
-The last decade has been phenomenal in the growth of Data Science as a discipline. Enormous strides have been made in almost all phases of data science that resulted in some of biggest innovations in recent times.
-As the exploration phase matures there is increasing focus on moving these data science findings into products and solutions that can be usable in market. These solutions and products needs to be reliable, resilient ,scalable and most important of all , stand test of time.
-Software development practices have been around for more than 40 years now , and software delivery models has gone through multiple phases and has stabilized enough that more and more of our day to day activities are software driven.
-As AI/ML teams come out of a prototyping/pilot phase to a product development phase, here are a few pointers customized to a data science project, to build a reliable AI/ML based products.
-## Understand the difference between prototype and a software product
-More often than not many data science projects today start and end as a pilot or prototype never being deployed to larger audience. With a pilot/prototype, the output is needed in a really short time, and the goal is to getting things to work rather than maintainability or reliability.
-On the other hand when you build a AI/ML product consumed by millions of users, the model that you build or the software you build around it will be used by the customers for atleast 3–4 years, hence the goal here is not just to get the functionality in place but ensure that its reliable, scalable and maintainable.
-A minor additional loop in your inference code might not be a big issue while you are trying to build a prototype for quick use, but it could spiral into a serious memory issue when scaled up and used for a longer time.
-Understanding the difference between the two is fundemental to building a resilient AI/ML solution.
-## Any module you write should be self testable
-Just like any module in a software engineering life cycle, any component built in a ML lifecycle must be self testable and be confident of its working without a dependency on the consumers of the module. For e.g a code that an ML engineer writes to replace missing data with mean of the column should be testable independent of the nature of data or the nature of model selected
+The last decade has been phenomenal in the growth of Data Science as a discipline. Enormous strides have been made in almost all phases of data science, resulting in some of the biggest innovations in recent times.
+As the exploration phase matures, there is increasing focus on moving these data science findings into products and solutions usable in the market. These solutions and products need to be reliable, resilient, scalable, and most important of all, able to stand the test of time.
+Software development practices have been around for more than 40 years now, and software delivery models have gone through multiple phases and have stabilized enough that more and more of our day-to-day activities are software driven.
+As AI/ML teams move from a prototyping/pilot phase to a product development phase, here are a few pointers, customized to a data science project, for building reliable AI/ML-based products.
+## Understand the difference between a prototype and a software product
+More often than not, many data science projects today start and end as a pilot or prototype, never being deployed to a larger audience. With a pilot/prototype, the output is needed in a really short time, and the goal is getting things to work rather than maintainability or reliability.
+On the other hand, when you build an AI/ML product consumed by millions of users, the model or the software you build around it will be used by customers for at least 3–4 years. The goal here is not just to get the functionality in place, but to ensure that it's reliable, scalable, and maintainable.
+A minor additional loop in your inference code might not be a big issue while building a prototype for quick use, but it could spiral into a serious memory issue when scaled up and used over a longer time.
+Understanding the difference between the two is fundamental to building a resilient AI/ML solution.
+## Any module you write should be self-testable
+Just like any module in a software engineering life cycle, any component built in an ML lifecycle must be self-testable and confident of its own correctness, without depending on the consumers of the module. For example, code that replaces missing data with the mean of a column should be testable independent of the nature of the data or the model selected.
 ## Integrate and deploy as soon and as often as possible
-More often than not the data science development is still a fractured process where the model comes out first after multiple iterations and the MLOps part comes later as an after thought.
-It is always better to test out the end to end pipeline even with a baseline model, then continue to iterate to better the model . This ensures we can fail fast and fail often.
+More often than not, data science development is still a fractured process where the model comes out first after multiple iterations, and the MLOps part comes later as an afterthought.
+It is always better to test the end-to-end pipeline, even with a baseline model, then continue to iterate and improve the model. This lets you fail fast and fail often.
 ## Always maintain a single source of truth (SST) for everything
-A quite overlooked activity in any data science development project is the need to have a single source of truth(SST). This can pertain to any component in the development.
-Have a single set of code versioned and developed from a GitHub repository from where the entire team runs their code, rather than having separate copies in each of the dev machine
-Have a single point from where the data set is versioned ,controlled and downloaded for development by the entire team.
-This will solve a host of integration issues down the line
-## Code defensively (Whatever will go wrong will go wrong)
-Model development and feature engineering happens with a assumption that the data would be in a specific format. This would be the basis on which data cleaning happens as well. But more often than not, data and values might not be what you might expect to be. A single bad data could throw your pipeline off gear. Hence it is essential to anticipate this failure and code defensively
+A commonly overlooked activity in any data science development project is maintaining a single source of truth (SST). This applies to every component of the development process.
+Have a single set of code, versioned and developed from a GitHub repository the entire team runs against, rather than separate copies on each developer's machine.
+Have a single point from which the dataset is versioned, controlled, and downloaded for development by the entire team.
+This solves a host of integration issues down the line.
+## Code defensively (whatever can go wrong will go wrong)
+Model development and feature engineering often assume the data will be in a specific format, and data cleaning is built on that assumption. But more often than not, the data won't be exactly what you expect. A single piece of bad data can throw your pipeline off. It's essential to anticipate this and code defensively.
 ## Do code reviews
-Machine learning pipelines have greater chances of failures due to cascading data processing issues, that percolate and affect the model performance
-Rectifying simple logical mistakes in code can help improve the performance of the model to a great extent.
-Doing regular code reviews ensures to keep this in check
-## “Fix and prevent” bugs
-Everytime you find a bug either in the model code or the data processing code or the inference code, ensure you not only fix it but also put in loggings and other protections in place that it prevents future bugs due to manual errors from cropping up in the area.
-## Never hard code
-While its convenient to hardcode API keys and data access keys in notebook during the exploration phase, it can be a dangerous practice since while those codes are moved to production a single unencrypted piece of secure information can jeopardize and put the entire application in peril.
-## Keep code future friendly
-Even while creating the code in a notebook or in a python script, ensure that it is future friendly. With lot of new libraries and innovations coming in , the code changes at a rapid pace. But it is important to capture the design considerations and the original intent of writing a code in a specific way , either can extensive comments or as unit test codes.
-## Document all decisions and make available to everyone in the team
-Data science teams are more siloed than traditional development teams, hence any decisions that you make, say choosing a specific hyperparameter due to a specific reason or dropping a feature, must be made known to the entire team.
-Modern collaboration tools like MS Teams, Slack helps you making this easier. This would be a as well preferred as it is searchable and understandable as opposed to traditional MS Word based documentation
+Machine learning pipelines have a greater chance of failure due to cascading data processing issues that affect model performance.
+Catching simple logical mistakes in code can meaningfully improve model performance.
+Regular code reviews keep this in check.
+## "Fix and prevent" bugs
+Every time you find a bug — in the model code, the data processing code, or the inference code — don't just fix it. Add logging and other safeguards so similar bugs don't recur in that area.
+## Never hardcode
+It's convenient to hardcode API keys and data access keys in a notebook during exploration, but it's a dangerous practice — once that code moves to production, a single piece of unencrypted, sensitive information can jeopardize the entire application.
+## Keep code future-friendly
+Even when writing code in a notebook or a Python script, keep it future-friendly. As new libraries and techniques emerge, code changes rapidly, so it's important to capture your design considerations and original intent — either through clear comments or unit tests.
+## Document all decisions and make them available to the whole team
+Data science teams tend to be more siloed than traditional development teams, so any decision you make — say, choosing a specific hyperparameter for a specific reason, or dropping a feature — should be made known to the entire team.
+Modern collaboration tools like MS Teams and Slack make this easier, and are preferable to traditional Word-based documentation since they're searchable and easier to reference.
 ## Use the right tool for the right purpose
-People are creatures of habit and would default to tools they are comfortable in for all purposes . In the age of SaaS and fast changing technologies, using the same tool for all purposes and force fitting it to do things that is not meant to be is self defeating and time consuming. say for e.g. AWS Sagemaker is a great tool to develop and deploy models, but if you are more concerned about doing big data processing, sagemaker while can is not the best tool to do that. AWS Glue or Spark might suit you better.
-## Do not Repeat Yourself (DRY)
-A lot of data scientists in the world are doing the same work over and over again. Activities like stop words removal ,lemmatizing or writing a pytorch boiler plate training code are repetitive and non productive. These must be avoided. Themes like Feature Stores, tools like Pytorch lightning are a good step towards implementing DRY in your data science project
+People are creatures of habit and default to the tools they're comfortable with for everything. In an age of fast-changing SaaS tools, using the same tool for every purpose and forcing it to do things it wasn't built for is self-defeating and time-consuming. For example, AWS SageMaker is a great tool for developing and deploying models, but if you're focused on big data processing, SageMaker isn't the best fit — AWS Glue or Spark might suit you better.
+## Don't repeat yourself (DRY)
+A lot of data scientists end up doing the same work over and over. Activities like stop-word removal, lemmatizing, or writing PyTorch boilerplate training code are repetitive and unproductive, and should be avoided. Feature stores and tools like PyTorch Lightning are good steps toward DRY in a data science project.
 ## Maintain the sanctity of production
-While making modifications to a live and production systems , for say, adding a new feature or modifying a hyper parameter, directly on the production system might be convinient, it is always a bad idea.Always ensure and respect the sancitity of production and changes should be done after thorough testing in other stacks
-## Make it work and then make it great
-Data science projects are a never ending iterative process. Though its a noble thought to aim for a close to human level accuracy on any machine learning model, it is important to not to go overboard with it lest the project remains in a development hell and the model never sees the light of the day.
+Modifying a live production system directly — adding a feature or tweaking a hyperparameter — might be convenient, but it's always a bad idea. Always respect the sanctity of production, and make changes only after thorough testing in other environments.
+## Make it work, then make it great
+Data science projects are a never-ending, iterative process. While it's a noble goal to aim for close to human-level accuracy on a model, it's important not to go overboard, or the project will remain stuck in development and the model will never ship.

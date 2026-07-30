@@ -17,8 +17,8 @@ chapters:
       - title : Training and Certification
         file : about/certification
       
-  #- title : Projects
-  #  file: side_projects/sideproject
+  - title : Projects
+    file: side_projects/sideproject
   - title : Blogs
     file: blogs/blog
     sections:

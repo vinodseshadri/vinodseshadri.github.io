@@ -10,6 +10,12 @@ As a Senior Machine Learning Architect, I lead the development and deployment of
 
 I spearhead the engineering of Generative AI applications, including large-scale document summarization and decision support systems, ensuring high availability and optimized performance. I also drive the adoption of best practices in CI/CD, creating standardized templates for agent development and mentoring engineering teams to deliver impactful business value.
 
+##### Highlights
+- Architected a GenAI medical record summarization platform processing **2.5M+ records/month**, projected to save **$2.3M** annually.
+- Designed multi-agent systems (Google ADK, AWS Bedrock) supporting thousands of daily production requests, with architecture decisions covering high availability, latency optimization, and cost.
+- Authored the org's standardized agent-development templates and CI/CD conventions, now used across engineering teams.
+- Mentor engineers on agentic AI architecture and production ML best practices.
+
 ### Wipro Limited / Machine Learning Architect (Principal Machine Learning Engineer)/Bangalore, India and Austin  , TX 
 
 September 2021 – August 2022

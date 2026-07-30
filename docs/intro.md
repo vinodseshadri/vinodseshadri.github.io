@@ -25,3 +25,7 @@ Here, I lead teams utilizing **Google ADK, AWS Bedrock, and Multi-Agent Systems*
 My responsibilities include architecting solutions, creating standardized agent development templates, and mentoring engineering teams to deliver impactful business value.
 
 Personally, I am deeply interested in Agentic AI, LLM-as-a-Judge evaluation frameworks, and the future of autonomous systems.
+
+## Projects
+
+[**Tech Design**](/techdesign/) — a daily-refreshed, swipeable feed of engineering blog posts on LLM inference, systems design, and AI infra.

@@ -48,6 +48,12 @@ jobs:
         run: |
           jupyter-book build docs/
 
+      # Static subsites that live outside docs/ (untouched by Jupyter Book)
+      # get copied straight into the built output so they publish alongside it.
+      - name: Copy static subsites into build output
+        run: |
+          cp -r techdesign docs/_build/html/techdesign
+
       # https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow
 
       # Upload the book's HTML as an artifact

@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>TechDesign — Engineering Blog Digest</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --text: #e6edf3;
+    --text-dim: #9aa4b2;
+    --accent: #4493f8;
+    --chip: #21262d;
+    --chip-active: #1f4e8c;
+    --border: #30363d;
+    --saved: #e3b341;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa;
+      --card: #ffffff;
+      --text: #1f2328;
+      --text-dim: #59636e;
+      --accent: #0969da;
+      --chip: #eaeef2;
+      --chip-active: #b6d3f5;
+      --border: #d1d9e0;
+      --saved: #9a6700;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overscroll-behavior-y: none; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    padding: calc(env(safe-area-inset-top) + 10px) 14px 8px;
+    background: linear-gradient(to bottom, var(--bg) 55%, transparent);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .logo { font-weight: 800; font-size: 17px; letter-spacing: -0.3px; }
+  .logo span { color: var(--accent); }
+  .counter {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .tab {
+    border: 1px solid var(--border);
+    background: var(--chip);
+    color: var(--text);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .tab.active { background: var(--chip-active); border-color: var(--accent); }
+  .chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 8px auto 0;
+    max-width: 640px;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    background: var(--chip);
+    color: var(--text);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .chip.active { background: var(--chip-active); border-color: var(--accent); }
+  main {
+    height: 100dvh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+  }
+  main::-webkit-scrollbar { display: none; }
+  .card {
+    height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    justify-content: center;
+  }
+  .card.hidden { display: none; }
+  .card-inner {
+    width: 100%;
+    max-width: 640px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+  }
+  @media (min-width: 700px) {
+    .card { padding: 0 12px; }
+    .card-inner {
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+  }
+  .hero {
+    position: relative;
+    height: 42%;
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: var(--chip);
+  }
+  .hero img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hero .placeholder {
+    position: absolute; inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 2px;
+  }
+  .hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 55%, var(--card));
+    pointer-events: none;
+  }
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px calc(env(safe-area-inset-bottom) + 16px);
+    min-height: 0;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .source {
+    background: var(--chip);
+    border: 1px solid var(--border);
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .seen { color: var(--accent); }
+  h2 {
+    font-size: clamp(19px, 5.4vw, 26px);
+    line-height: 1.25;
+    letter-spacing: -0.4px;
+    margin: 10px 0 8px;
+    overflow-wrap: anywhere;
+  }
+  .summary {
+    overflow-wrap: anywhere;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 7;
+  }
+  .actions {
+    margin-top: auto;
+    padding-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .read-link {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .save-btn {
+    border: 1px solid var(--border);
+    background: var(--chip);
+    color: var(--text-dim);
+    font-size: 20px;
+    line-height: 1;
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .save-btn.saved { color: var(--saved); border-color: var(--saved); }
+  .swipe-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-top: 10px;
+    opacity: 0.7;
+  }
+  .swipe-hint b { font-weight: 400; opacity: 0.8; }
+  .empty {
+    height: 100dvh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 0 30px;
+  }
+  .empty b { color: var(--text); font-size: 18px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">Tech<span>Design</span></div>
+    <button class="tab active" id="tab-all">Feed</button>
+    <button class="tab" id="tab-read">Read <span id="read-count"></span></button>
+    <button class="tab" id="tab-saved">Saved <span id="saved-count"></span></button>
+    <div class="counter" id="counter"></div>
+  </div>
+  <div class="chips" id="chips"><button class="chip active" data-category="All">All</button><button class="chip" data-category="Systems Design &amp; Distributed Systems">Systems Design &amp; Distributed Systems</button><button class="chip" data-category="Tier 1 Engineering Blogs">Tier 1 Engineering Blogs</button><button class="chip" data-category="FAANG Engineering">FAANG Engineering</button><button class="chip" data-category="LLM Inference &amp; AI Labs">LLM Inference &amp; AI Labs</button></div>
+</header>
+
+<main id="feed">
+
+<article class="card" data-url="https://medium.com/quantumblack/smart-contracts-for-ai-agents-6122e0c7e2f3" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://miro.medium.com/v2/resize:fit:1200/1*QyahuiiO1ZEE7URkB2lKyQ.jpeg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T13:43:49+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Smart contracts for AI agents: Centralized platforms-&gt;distributed control planes</h2>
+      <p class="summary">We are the Artificial Intelligence (AI) arm of McKinsey &amp; Company. We are a global community of technical and business experts, and we thrive on using AI to tackle the most complex problems. As AI agents move out of the realm of experimentation and into core enterprise workflows, the question becomes how to govern them effectively. Companies are deploying agents across teams and runtime environments, making software delivery, customer…</p>
+      <div class="actions">
+        <a class="read-link" href="https://medium.com/quantumblack/smart-contracts-for-ai-agents-6122e0c7e2f3" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/wizenink/aethers3" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://opengraph.githubassets.com/6706cccde2e1186cd14b222c3cf8d613b602d53017720591058487f78a8687b8/wizenink/aethers3" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T13:17:52+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: A self-hostable, distributed, S3-compatible object store on the BEAM</h2>
+      <p class="summary">A self-hostable, distributed, S3-compatible object store that runs on the BEAM. - wizenink/aethers3</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/wizenink/aethers3" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/cdnjs-dev-platform-migration/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01KYSB8K2P26A5EW9F1D1XDH8J.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-30T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Dogfooding at scale: migrating cdnjs to Cloudflare’s Developer Platform</h2>
+      <p class="summary">We moved cdnjs, serving 9 billion requests a day, entirely onto Cloudflare&#x27;s Developer Platform. That means we’re running one of the Internet&#x27;s busiest open-source CDNs on our own building blocks, and we pushed Workflows and Workers limits higher for everyone.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/cdnjs-dev-platform-migration/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.wiz.io/blog/cosmosescape-taking-over-every-database-in-azure-cosmos-db" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://www.datocms-assets.com/75231/1785342613-cosmos-2x-1.png?fm=webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T12:13:42+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>CosmosEscape: Taking over Every Database in Azure Cosmos DB</h2>
+      <p class="summary">A critical vulnerability chain in Azure Cosmos DB enabled full read and write access to every Cosmos DB database. Wiz Research uncovered CosmosEscape , a critical vulnerability in Azure’s flagship database service, Azure Cosmos DB, via its Gremlin API. The vulnerability could have been exploited to compromise every database in the service, including Microsoft&#x27;s own internal databases - potentially enabling a cross-service attack. Through…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.wiz.io/blog/cosmosescape-taking-over-every-database-in-azure-cosmos-db" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://hackerpublicradio.org/eps.php?id=3675" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T12:09:18+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>design of Plan 9 and how I use it (2022)</h2>
+      <p class="summary">Hosted by binrc on Friday, 2022-09-02 is flagged as Explicit and is released under a CC-BY-SA license . Tags: UNIX , Plan 9 . Comments: 6 . Listen in ogg , opus , or mp3 format. Play now: Duration: 01:19:31 Download the transcription and subtitles . Can you sum up plan 9 in layman&#x27;s terms? It does everything Unix does only less reliably - Ken Thompson If you cannot imagine a use for a computer that does not involve a web browser, Plan 9 may not…</p>
+      <div class="actions">
+        <a class="read-link" href="https://hackerpublicradio.org/eps.php?id=3675" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.pockeng.com/tools/lcd.html" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://www.pockeng.com/tools/resources/icon_256_256.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T11:16:49+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Design and simulate 16×2 or 20×4 Arduino displays in seconds</h2>
+      <p class="summary">Design and simulate 16Ã2 and 20Ã4 Arduino displays in seconds. Preview your LCD layout, generate code instantlyâno hardware required.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.pockeng.com/tools/lcd.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.wsj.com/business/could-the-most-radical-plane-design-since-the-concorde-take-on-boeing-abd9a6ce" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T04:11:20+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Could the Most Radical Plane Design Since the Concorde Take on Boeing?</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.wsj.com/business/could-the-most-radical-plane-design-since-the-concorde-take-on-boeing-abd9a6ce" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.youtube.com/watch?v=wgMq7yha9wU&amp;list=PLksE8LDXGXl_MQHKr2DqhfDC64W7QHjxL" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T03:24:55+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>2.75-FUNdaMENTALs of Design(a.k.a. Precision Engineering Basics) by Alex Slocum [video]</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.youtube.com/watch?v=wgMq7yha9wU&amp;list=PLksE8LDXGXl_MQHKr2DqhfDC64W7QHjxL" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/convert-proprietary-code-open-ansi-sql-genie-code" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/blog_images/convert-proprietary-code-to-open-ansi-sql-blog-img-og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-30T01:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Convert proprietary code to open ANSI SQL with Genie Code</h2>
+      <p class="summary">Migrating from a legacy data warehouse is a complex undertaking, requiring teams...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/convert-proprietary-code-open-ansi-sql-genie-code" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://notes.designarena.ai/kimi-k3s-design-secret-may-be-in-its-thinking-traces/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://storage.ghost.io/c/c3/d9/c3d943c7-9537-4835-837f-b707f6264237/content/images/size/w1200/2026/07/Kimi-K3-post-2.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-30T00:00:50+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Kimi K3&#x27;s Design Secret May Be in Its Thinking Traces</h2>
+      <p class="summary">Kimi K3, Moonshot AI’s latest open-weight 1 model, ranks 1st on our single-shot Frontend Arena with an Elo of 1392. This is 10 positions higher than Kimi K2.6 and 16 positions higher than Kimi K2.7 Code, marking the largest jump we’ve seen in the Moonshot model line. However, we found that Kimi K3 uses an extreme amount of thinking tokens, using over 12x more reasoning than Claude Opus 4.8 and over double that of Kimi K2.6 . This is a lot of…</p>
+      <div class="actions">
+        <a class="read-link" href="https://notes.designarena.ai/kimi-k3s-design-secret-may-be-in-its-thinking-traces/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/quality-care-mission-finance-protects-margin" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/Screenshot-2026-07-29-at-14.06.34.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T18:59:31+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Quality care is the mission. Finance protects the margin.</h2>
+      <p class="summary">Ask a health system CFO where this year&#x27;s margin is landing and you will always get a hard-won answer...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/quality-care-mission-finance-protects-margin" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/energy-runs-volatile-markets-finance-protects-margin" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/blog-og-finance-for-energy.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T18:30:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Energy runs on volatile markets. Finance protects the margin.</h2>
+      <p class="summary">Ask an energy CFO where this year&#x27;s margin is landing and you will always get a hard-won answer...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/energy-runs-volatile-markets-finance-protects-margin" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/manufacturing-runs-capital-finance-protects-margin" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/blog-og-finance-for-manufacturing.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T18:30:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Manufacturing runs on capital. Finance protects the margin.</h2>
+      <p class="summary">Ask a manufacturing CFO where this year&#x27;s margin is landing and you will always get a hard-won answer...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/manufacturing-runs-capital-finance-protects-margin" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/bringing-real-time-fraud-prevention-government-benefits" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/blog-og-stop-fraud.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T17:45:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Bringing real-time fraud prevention to government benefits</h2>
+      <p class="summary">Asked to do the impossibleFraud and improper payments cost federal benefits programs...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/bringing-real-time-fraud-prevention-government-benefits" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/agents-production-lines-trusted-decisions-real-time" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/blog_images/agents-for-production-lines-trusted-decisions-in-blog-img-og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T17:30:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Agents for production lines: Trusted decisions in real time</h2>
+      <p class="summary">Executive summary09:14, mid-shift. The filler trips. The line manager has minutes,...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/agents-production-lines-trusted-decisions-real-time" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/how-agentic-ai-can-help-telecom-finance-teams-protect-margin-when-every-moment-matters" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/slide-05.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T17:26:32+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>How agentic AI can help telecom finance teams protect the margin when every moment matters</h2>
+      <p class="summary">How preventing revenue leakage became finance&#x27;s front lineIn telecom, revenue is...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/how-agentic-ai-can-help-telecom-finance-teams-protect-margin-when-every-moment-matters" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.google/innovation-and-ai/models-and-research/google-labs/lyria-3-5/" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(181,45%,32%),hsl(231,50%,18%))"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Lyria3.5_social.max-600x600.format-webp.webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">GD</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Google DeepMind</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-29T16:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>We’re launching Lyria 3.5 in Google Flow Music, with advances across musicality, lyrics, vocals, and creative control.</h2>
+      <p class="summary">Our newest music generation model, Lyria 3.5, delivers significant advancements across musicality, lyrics, and vocal quality, empowering you to craft richer tracks. We’r…</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.google/innovation-and-ai/models-and-research/google-labs/lyria-3-5/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.amazon.science/blog/a-new-benchmark-for-evaluating-patient-facing-health-ai-agents" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(24,45%,32%),hsl(74,50%,18%))"><img src="https://cdn.amazon.science/dims4/default/5e27b47/2147483647/strip/true/crop/1920x1008+0+36/resize/1200x630!/quality/90/?url=https%3A%2F%2Famzn-science-production-science.s3.us-east-1.amazonaws.com%2Fscience%2F55%2Fc5%2Fa57281c943d4820abffddb75f238%2Fpatientagentbench-01-16x9.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AS</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Amazon Science</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-29T15:16:52+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>A new benchmark for evaluating patient-facing health AI agents</h2>
+      <p class="summary">PatientAgentBench generates a synthetic patient health record, a realistic clinical vignette, and a patient agent that converses with the AI system under evaluation, to capture what a patient-facing agent actually has to do.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.amazon.science/blog/a-new-benchmark-for-evaluating-patient-facing-health-ai-agents" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/post-quantum-authentication-to-origins/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01KYN5V56B8HHHZ71NTH17JJVV.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Post-quantum authentication to origins is now supported</h2>
+      <p class="summary">Cloudflare now supports post-quantum (PQ) authentication when connecting to customer origin servers via Authenticated Origin Pulls and Custom Origin Trust Store. This is the first step towards providing PQ authentication for all Cloudflare products.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/post-quantum-authentication-to-origins/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="http://stefano.petrilli.xyz/prompt-to-model/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T07:35:53+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>We are surprisingly close to prompt-to-model in computer vision</h2>
+      <p class="summary">In computer vision, neural networks have become a commodity. You are a Google search away from downloading near-SOTA neural networks that are free, open source, have a permissive license, and are capable enough for most use cases. Take Rekor, ZeroEyes, Intenseye, and Tiliter. I am not certain how their products are really implemented, but at least in theory, they could be replicated just by taking whatever recent YOLO flavour you like and…</p>
+      <div class="actions">
+        <a class="read-link" href="http://stefano.petrilli.xyz/prompt-to-model/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://thezvi.substack.com/p/more-on-an-internal-openai-model" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T06:49:02+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>More on an Internal OpenAI Model Hacking into HuggingFace</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://thezvi.substack.com/p/more-on-an-internal-openai-model" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/cipherxsniper/proofchain" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://opengraph.githubassets.com/12b70a2114eb6dc91662eacbc8ed37d58d3db8f661662e10d0d3cefe8d983c8e/cipherxsniper/proofchain" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-29T06:03:24+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Proofchain – verify any database&#x27;s history without trusting the operator</h2>
+      <p class="summary">Point it at any Postgres table of real events. Get a hash-chained, Ed25519-signed, append-only proof log. Anyone can independently verify the chain — no trust in the operator required. Most &quot;proof of X&quot; claims in finance and crypto are just numbers an operator generated internally, with no way for an outside party to check them. proofchain fixes that generically: point it at any table, any columns, and get a cryptographic chain that&#x27;s…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/cipherxsniper/proofchain" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://arxiv.org/abs/2607.21839" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://static.arxiv.org/icons/twitter/arxiv-logo-twitter-square.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T04:07:06+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Certified in Theory, Broken in Practice: Assumption Gaps in Cryptographic Model</h2>
+      <p class="summary">arXivLabs is a framework that allows collaborators to develop and share new arXiv features directly on our website. Both individuals and organizations that work with arXivLabs have embraced and accepted our values of openness, community, excellence, and user data privacy. arXiv is committed to these values and only works with partners that adhere to them. Have an idea for a project that will add value for arXiv&#x27;s community? Learn more about…</p>
+      <div class="actions">
+        <a class="read-link" href="https://arxiv.org/abs/2607.21839" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://transformer-transformer.github.io/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-29T03:52:29+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Transformer Transformer: A Unified Model for Motion-Conditioned Robot Co-Design</h2>
+      <p class="summary">Not all robots are created equal — but what if you could design one for a specific task? We propose Transformer Transformer , a unified model that does exactly this: hand it a manipulation demonstration, and it generates a complete robot — every link, joint, motor, and inertial property — optimized for that motion. We fabricated one such design for cloth flinging on an ALOHA 2 bimanual platform; it reduced tracking error by 73% and max joint…</p>
+      <div class="actions">
+        <a class="read-link" href="https://transformer-transformer.github.io/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://intentlab.ai/blog/turn-your-intent-into-production-systems" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://intentlab.ai/og/turn-your-intent-into-production-systems.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-29T03:49:28+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>An autonomous fleet to turn your Intent into production systems</h2>
+      <p class="summary">Coding agents write code. They canât build the whole system. Our fleet takes over everything between your Intent and production-grade software â with quality and performance verifications that coding agents alone canât provide.</p>
+      <div class="actions">
+        <a class="read-link" href="https://intentlab.ai/blog/turn-your-intent-into-production-systems" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://yarlson.dev/blog/good-cli-design-is-mostly-silence/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://yarlson.dev/blog/good-cli-design-is-mostly-silence/og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-29T03:40:17+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Good CLI Design Is Mostly Silence</h2>
+      <p class="summary">That sounds small. It is not. It is one of the clearest differences between a toy command and a tool people can trust every day. A terminal command has two audiences. Sometimes a human is reading the output. Sometimes a script is. The script has no sense of humor. A person can ignore a progress line. A script cannot. A person can understand that Done! is not part of the JSON. A script writes it to a file and breaks the next command. It should…</p>
+      <div class="actions">
+        <a class="read-link" href="https://yarlson.dev/blog/good-cli-design-is-mostly-silence/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://arxiv.org/abs/2606.16475" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://static.arxiv.org/icons/twitter/arxiv-logo-twitter-square.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-29T00:57:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>AI systems out-persuade expert humans</h2>
+      <p class="summary">arXivLabs is a framework that allows collaborators to develop and share new arXiv features directly on our website. Both individuals and organizations that work with arXivLabs have embraced and accepted our values of openness, community, excellence, and user data privacy. arXiv is committed to these values and only works with partners that adhere to them. Have an idea for a project that will add value for arXiv&#x27;s community? Learn more about…</p>
+      <div class="actions">
+        <a class="read-link" href="https://arxiv.org/abs/2606.16475" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://marble.glass.bio/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T00:49:09+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Marble – a model-agnostic agent harness for life sciences</h2>
+      <p class="summary">A batteries-included, model-agnostic agent harness connecting life-science data, tools, and compute.</p>
+      <div class="actions">
+        <a class="read-link" href="https://marble.glass.bio/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.together.ai/blog/configuring-dedicated-model-inference" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(284,45%,32%),hsl(334,50%,18%))"><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a63a546410d4c650ed5bbf7_OG-image_20260724_configuring-dmi.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">TA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Together AI Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Configuring Dedicated Model Inference</h2>
+      <p class="summary">The three-part resource model behind Together AI Dedicated Model Inference—endpoints, deployments, configs—and how capacity-aware routing ties them together.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.together.ai/blog/configuring-dedicated-model-inference" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(284,45%,32%),hsl(334,50%,18%))"><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6a57c065a5acd7c3cdaa11_OG-partner-Moonshot-AI.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">TA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Together AI Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Together AI announces strategic partnership with Moonshot AI to natively serve Kimi models</h2>
+      <p class="summary">🤝 Together AI &amp; Y Combinator announce partnership to deliver the first dedicated YC GPU cluster → Kimi K3, Moonshot AI&#x27;s 2.8-trillion-parameter open model is live on Together AI, with a commitment to land all future open Moonshot models. 40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production... Today we&#x27;re announcing a strategic partnership with Moonshot AI, one of the leading model labs pushing…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.together.ai/blog/thunderagent" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(284,45%,32%),hsl(334,50%,18%))"><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6a82035816b6f2cc9af706_20260729_ThunderAgent_1200x630.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">TA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Together AI Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-29T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale</h2>
+      <p class="summary">ThunderAgent is a program-aware scheduler for agentic inference. By treating each agent workflow as a schedulable program, it eliminates KV cache thrashing to deliver more than 2x single-node throughput and near-linear multi-node scaling.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.together.ai/blog/thunderagent" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.axios.com/2026/07/28/openai-hugging-face-modal-labs-hack" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T23:55:51+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>OpenAI&#x27;s agents hacked second account during model testing</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.axios.com/2026/07/28/openai-hugging-face-modal-labs-hack" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.together.ai/customers/cursor" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a441ba0045393e9bab4ad06_OG-customer%20story-%20image-cursor.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T23:30:24+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Cursor and Together AI deliver real-time, low-latency inference at scale</h2>
+      <p class="summary">🤝 Together AI &amp; Y Combinator announce partnership to deliver the first dedicated YC GPU cluster → Cursor is an AI-powered coding platform where in-editor agents must respond inside the editor feedback loop, making worst-case latency under concurrency a hard requirement. Cursor partnered with Together AI to deploy production inference on NVIDIA Blackwell (GB200 NVL72 / HGX B200), optimize the stack end-to-end, and stand up a repeatable path from…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.together.ai/customers/cursor" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://alphainference.app/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://alphainference.app/assets/og-image.png?v=5" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T23:18:15+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Alpha Inference</h2>
+      <p class="summary">Last updated: June 29, 2026 Â· This is a plain-English summary of our terms. It is not itself legal advice; AlphaInference recommends you have these terms reviewed by qualified legal counsel in your jurisdiction before relying on them. AlphaInference provides general financial research and educational information only. Nothing on this platform â including scores, rankings, models, signals, screens, valuations, charts, or AI-generated summaries…</p>
+      <div class="actions">
+        <a class="read-link" href="https://alphainference.app/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/how-northstar-anesthesia-built-scheduling-app-workforce-3000-clinicians-weeks" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/-EP-Copy-of-Blog-Image-Templates-6_0.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T22:09:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>How NorthStar Anesthesia built a scheduling app for a workforce of 3,000 clinicians in weeks</h2>
+      <p class="summary">IntroductionNorthStar Anesthesia manages anesthesia staffing services across 25+ U.S...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/how-northstar-anesthesia-built-scheduling-app-workforce-3000-clinicians-weeks" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://benchmark.clickhouse.com/playground/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-28T20:20:52+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>ClickBench Playground – Test 110 Database Systems</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://benchmark.clickhouse.com/playground/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://pfrazee.leaflet.pub/3mrpsdizmus2h" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://leaflet.pub/lish/did%3Aplc%3Aragtjsm2j2vknwkz3zp4oxrd/3ly4hnkatvc2p/3mrpsdizmus2h/opengraph-image-vzkbb4?4bf24c8c13de861c" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-28T19:25:12+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Starting from Scale in the Design of the AT Protocol</h2>
+      <p class="summary">I’ve long been a believer in the local-first movement, an approach to software design in which user data lives on personal devices. Prior to Bluesky I worked on a number of local-first projects. These included SSB , a p2p social network, and Beaker Browser , a p2p web browser. I’m a local-first believer because I’m an advocate for open source and the web. Most of my professional career has been about open computing in some form. The local-first…</p>
+      <div class="actions">
+        <a class="read-link" href="https://pfrazee.leaflet.pub/3mrpsdizmus2h" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/audience-asset-media-finance-teams-need-understand-them-protect-margin" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/OG-Image_CFO-Anchor-Blog_Media.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T19:03:18+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>The audience is the asset. Media finance teams need to understand them to protect the margin.</h2>
+      <p class="summary">Ask a CFO at a media company where this year&#x27;s margin is landing and you will always get a hard-won answer...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/audience-asset-media-finance-teams-need-understand-them-protect-margin" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://medium.com/airbnb-engineering/eval-driven-development-lessons-from-evaluating-genai-at-scale-e817e5ae5788?source=rss----53c7c27702d5---4" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(223,45%,32%),hsl(273,50%,18%))"><img src="https://cdn-images-1.medium.com/max/1024/1*XK40dh-lXviuXXY_WhUCUA.jpeg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AE</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Airbnb Engineering</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T17:01:03+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Eval-driven development: Lessons from evaluating GenAI at scale</h2>
+      <p class="summary">How Airbnb teams build trustworthy Generative AI products by treating evaluation as a first-class engineering discipline; not an afterthought. Nestled into the lush hillside, this stunning modern retreat features striking natural wood architecture, terraced balconies, and a serene landscape. By: Rohit Girme , Dan Miller , Mia Zhao , Lifan Yang , Clint Kelly Introduction Generative AI breaks a lot of the assumptions that used to hold true for…</p>
+      <div class="actions">
+        <a class="read-link" href="https://medium.com/airbnb-engineering/eval-driven-development-lessons-from-evaluating-genai-at-scale-e817e5ae5788?source=rss----53c7c27702d5---4" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/prototype-production-high-qps-databricks-ai-search" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/HighQPSAISearchBlogOG.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T16:50:57+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>From prototype to production: High QPS for Databricks AI Search</h2>
+      <p class="summary">Search is everywhere: product discovery on retail sites, voice queries on smart...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/prototype-production-high-qps-databricks-ai-search" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://huggingface.co/blog/allenai/olmoearth-infrastructure" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(242,45%,32%),hsl(292,50%,18%))"><img src="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/N27UuRDvcQy4CvmrzRKAE.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HF</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hugging Face Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T16:27:42+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>The OlmoEarth Platform: Geospatial inference at planetary scale</h2>
+      <p class="summary">Why satellite inference is challenging The right hardware for the right task One request, hundreds of workers, and thousands of processes Finding and fetching the right pixels Handling failure at scale Where we&#x27;re headed 🌍 Learn more about OlmoEarth Platform: https://allenai.org/olmoearth The OlmoEarth models are our family of Earth observation foundation models, pretrained on roughly 10 terabytes of multimodal satellite data. Governments, NGOs,…</p>
+      <div class="actions">
+        <a class="read-link" href="https://huggingface.co/blog/allenai/olmoearth-infrastructure" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.google/innovation-and-ai/technology/developers-tools/expanding-managed-agents-gemini-api-3-6-flash-hooks/" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(235,45%,32%),hsl(285,50%,18%))"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/unnamed_2_vNnOv20.max-600x600.format-webp.webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">GA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Google AI Blog</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-28T16:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Gemini API Managed Agents: 3.6 Flash, hooks, and more</h2>
+      <p class="summary">Managed Agents in Gemini API now default to Gemini 3.6 Flash. New environment hooks let you block, lint, or audit tool calls inside the sandbox. Also, we’ve added budget controls, scheduled triggers, and free tier access.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.google/innovation-and-ai/technology/developers-tools/expanding-managed-agents-gemini-api-3-6-flash-hooks/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/how-databricks-manages-its-own-coding-agent-spend-unity-ai-gateway-budgets" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/2026-07-Blog-Deep-Dive-on-smart-defaults-budgets-OG-1200x628-2x.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T15:40:33+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>How Databricks manages its own coding agent spend with Unity AI Gateway Budgets</h2>
+      <p class="summary">At Databricks, the way we build software is changing quickly as we aggressively adopt...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/how-databricks-manages-its-own-coding-agent-spend-unity-ai-gateway-budgets" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://huggingface.co/blog/LiquidAI/lfm2-5-encoders" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(242,45%,32%),hsl(292,50%,18%))"><img src="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/n-ZhnrOiuWH5rhAFi86lL.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HF</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hugging Face Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T15:01:45+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>LFM2.5-Encoders for Fast Long-Context Inference on CPU</h2>
+      <p class="summary">Why we built a general-purpose encoder How the encoders are built Benchmark Results Inference speed on CPU and GPU LFM2.5-Encoder demos How to use and fine-tune LFM2.5-Encoders Load and run the model Fine-tuning for your task Get started with LFM2.5-Encoders Citation Today, we release two new encoder models on Hugging Face: LFM2.5-Encoder-230M and LFM2.5-Encoder-350M . They match the quality of larger models but stay fast as inputs get longer.…</p>
+      <div class="actions">
+        <a class="read-link" href="https://huggingface.co/blog/LiquidAI/lfm2-5-encoders" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.google/products-and-platforms/products/search/ai-mode-real-world-tips/" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(235,45%,32%),hsl(285,50%,18%))"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/AI_Mode_real_world.max-600x600.format-webp.webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">GA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Google AI Blog</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-28T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>5 ways AI Mode in Search helps you enjoy the real world</h2>
+      <p class="summary">Illustration of a black magnifying glass in a white circle on green grass surrounded by items related to fun activities like tennis and games</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.google/products-and-platforms/products/search/ai-mode-real-world-tips/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.google/products-and-platforms/products/search/dinner-party-hosting-tips/" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(235,45%,32%),hsl(285,50%,18%))"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Dinner_parties.max-600x600.format-webp.webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">GA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Google AI Blog</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-28T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>5 ways to host the ultimate dinner party with Google Search</h2>
+      <p class="summary">An illustrated black magnifying glass with a sparkle in a white circle surrounded by a dinner party tablescape</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.google/products-and-platforms/products/search/dinner-party-hosting-tips/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/q2-2026-internet-disruption-summary/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01KYMEWF4EKVC0NGY7QBV1J1ZF.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Natural disasters and government interference: examining Q2 2026’s major Internet disruption events</h2>
+      <p class="summary">Cloudflare Radar tracked Internet disruptions driven by natural disasters, government-mandated shutdowns, and DNSSEC key rollovers over the last quarter. This post analyzes traffic telemetry to explain how these events impacted global connectivity.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/q2-2026-internet-disruption-summary/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.nilenso.com/blog/2026/05/18/evals-before-prompts-building-an-llm-ocr-for-kyc/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="http://blog.nilenso.com/og/blog-2026-05-18-evals-before-prompts-building-an-llm-ocr-for-kyc.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T06:58:01+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Evals before prompts: building an LLM OCR for KYC</h2>
+      <p class="summary">KYC, or Know Your Customer, is how banks, fintechs, and a growing number of businesses verify that a person is who they claim to be. At the heart of it sits a deeply unglamorous task: typing the fields off a scanned PAN card or Aadhaar into a form. Humans are bad at this. It’s boring, error-prone, and, at scale, expensive. Can an LLM do it instead? Around this time last year, I was trying to answer that question for one of our clients. They were…</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.nilenso.com/blog/2026/05/18/evals-before-prompts-building-an-llm-ocr-for-kyc/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://astra.pizza/posts/machines-will-never-understand-language/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T05:48:47+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Machines will never understand language</h2>
+      <p class="summary">this essay was typed, key by key, by my flesh tentacles colloquially known as hands (including the em-dashes, dammit) I’m in grade 5. I’m lugging around the 800 page Learn to Program with Visual Basic 6 book to my classes. I must have looked ridiculous with a tome bigger than all my other school books combined. I was voraciously reading it every chance I got, soaking up programmer tips and reading about The Boolean China Shop (oblivious, it…</p>
+      <div class="actions">
+        <a class="read-link" href="https://astra.pizza/posts/machines-will-never-understand-language/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://docs.pytorch.org/devlogs/compiler/2026-07-25-pytorch-a-reference-language/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:46:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>PyTorch: A Reference Language</h2>
+      <p class="summary">A reference implementation is a simplified but complete version of a system that trades performance in return for clarity. We might then say a reference “language” is the fabric of APIs and conventions from which these implementations are cut. At first glance, PyTorch obviously is a reference language: it is, after all, commonly called the lingua franca of modern deep learning. But upon a closer look, there is confusion: Reference…</p>
+      <div class="actions">
+        <a class="read-link" href="https://docs.pytorch.org/devlogs/compiler/2026-07-25-pytorch-a-reference-language/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.bloomberg.com/news/articles/2026-07-27/ai-hunts-for-cyber-flaws-finding-record-numbers-in-tech-sector" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:41:48+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>AI Tools Uncover Record Software Flaws in Tech Sector, Database Shows</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.bloomberg.com/news/articles/2026-07-27/ai-hunts-for-cyber-flaws-finding-record-numbers-in-tech-sector" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.youtube.com/watch?v=Sir59K8ZDPU" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:36:01+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Why Agentic Systems Need Ontologies [video]</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.youtube.com/watch?v=Sir59K8ZDPU" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://twitter.com/jpschroeder/status/2081751862768717956" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://pbs.twimg.com/media/HOPdyNeW0AA_WYq.png:large" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:31:42+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Token Use by Model</h2>
+      <p class="summary">This chart says so much.... - Literally the exact same prompt. - All long horizon one-shots. - Totally reflects real-world experience.</p>
+      <div class="actions">
+        <a class="read-link" href="https://twitter.com/jpschroeder/status/2081751862768717956" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://etymologue.com/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="http://localhost:3000/og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:29:32+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: Etymology Database from Wiktionary</h2>
+      <p class="summary">I used Google AI credits to parse about a million wiktionary entries to make an etymology database. Still a work in progress. You can search words by the affixes they contain, find cognates, derivatives, and more, all information that is available but otherwise latent in Wiktionary. And you can search words by meaning, language(s) of origin, part of speech, and much more. Hoping to continue to improve the dataset and have an updated and accurate…</p>
+      <div class="actions">
+        <a class="read-link" href="https://etymologue.com/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.amd.com/en/developer/resources/technical-articles/2026/kimi-k3-on-amd-instinct-gpus.html" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:29:17+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Day 0 Kimi-K3 Inference Deployment with Atom on AMD Instinct MI355X GPUs</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.amd.com/en/developer/resources/technical-articles/2026/kimi-k3-on-amd-instinct-gpus.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://twitter.com/HarukaKunori/status/2081697911847481502" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://pbs.twimg.com/profile_images/1949677619454345216/to179y30_200x200.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T04:03:10+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>&quot;Opus 5 is a really bad model&quot;</h2>
+      <p class="summary">Opus 5 is a really bad model</p>
+      <div class="actions">
+        <a class="read-link" href="https://twitter.com/HarukaKunori/status/2081697911847481502" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://matthewsaltz.com/blog/using-an-open-model-feels-surprisingly-good/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T02:37:14+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Using an open model feels surprisingly good</h2>
+      <p class="summary">I&#x27;ve been using Claude and ChatGPT like the next guy for probably two years now. I&#x27;ve never been a huge &quot;open software&quot; nerd or anything like that. But just now, I got opencode working on my own inference endpoint and... it felt surprisingly good. It feels... freeing, somehow. I own the endpoint, and my data just goes from my laptop to there and back. It feels like it&#x27;s mine. It&#x27;s really nice. The motivation for this was that I just got home and…</p>
+      <div class="actions">
+        <a class="read-link" href="https://matthewsaltz.com/blog/using-an-open-model-feels-surprisingly-good/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://crowdhailer.me/2026-06-08/a-programming-language-for-humans/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://crowdhailer.me/2026-06-08/a-programming-language-for-humans/humans.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T02:21:37+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>EYG: A Programming Language for Humans</h2>
+      <p class="summary">Eat Your Greens (EYG) is a statically typed functional programming language. It is a better programming language, for some measure of better. This post explains what I consider to be better and which features that requires adding or removing from the language. I started building a language during a 10 week wait for my visa to start a new job in Sweden. I built EYG specifically after noticing a recurring pattern amongst technically minded, but…</p>
+      <div class="actions">
+        <a class="read-link" href="https://crowdhailer.me/2026-06-08/a-programming-language-for-humans/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/get-started-genie-one-top-ai-cowork-use-cases-business-users" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/Untitled-design-1.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-28T01:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Get Started with Genie One: Top AI Cowork Use Cases for Business Users</h2>
+      <p class="summary">When most people think of AI helping their everyday work, a simple chatbot that answers...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/get-started-genie-one-top-ai-cowork-use-cases-business-users" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://machinelearning.apple.com/research/audio-synthesis-diffusion-transformers" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(246,45%,32%),hsl(296,50%,18%))"><img src="https://mlr.cdn-apple.com/media/Home_1200x630_48225d82e9.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AM</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Apple Machine Learning Research</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-28T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Memory Efficient Audio Synthesis with Decoupled Temporal Depth Diffusion Transformers</h2>
+      <p class="summary">Siri Expressive Voices synthesize rich, configurable speech in real time and entirely on device, powered by AFM 3 Core Advanced, Apple’s most powerful on-device foundation model. This work presents the memory-efficient audio synthesis architecture behind that capability: a detokenizer that converts the semantic audio tokens emitted by the foundation model into high-fidelity audio within the tight compute and memory budget of the Apple Matrix…</p>
+      <div class="actions">
+        <a class="read-link" href="https://machinelearning.apple.com/research/audio-synthesis-diffusion-transformers" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/eu-digital-product-passport-traceability-deadline" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/manufacturing.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T23:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>The EU Digital Product Passport: a traceability deadline</h2>
+      <p class="summary">Informational only, not legal advice. Confirm all regulatory details against the...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/eu-digital-product-passport-traceability-deadline" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://issendai.com/psychology/sick-systems/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-27T20:56:48+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Sick Systems: How to Keep Someone with You Forever (2010)</h2>
+      <p class="summary">So you want to keep your lover or your employee close. Bound to you, even. You have a few options. You could be the best lover they’ve ever had, kind, charming, thoughtful, competent, witty, and a tiger in bed. You could be the best workplace they’ve ever had, with challenging work, rewards for talent, initiative, and professional development, an excellent work/life balance, and good pay. But both of those options demand a lot from you. Besides,…</p>
+      <div class="actions">
+        <a class="read-link" href="https://issendai.com/psychology/sick-systems/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://rsms.me/eames-definition-of-design" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-27T19:53:11+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>The Definition of Design</h2>
+      <p class="summary">What is your definition of “Design”, Monsieur Eames? One could describe design as a plan for arranging elements to accomplish a particular purpose. Is Design an expression of art? I would rather say it’s an expression of purpose. It may, if it’s good enough, later be judged as art. Is Design a craft for industrial purposes? No, but design may be a solution to some industrial problems. Is Design a discipline that concerns itself with only one…</p>
+      <div class="actions">
+        <a class="read-link" href="https://rsms.me/eames-definition-of-design" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.astrophyzix.com/p/float64-nbody-live-apophis-tracker.html" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-27T17:55:23+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Live Asteroid Apophis Tracking Systems by Astrophyzix Digital Observatory</h2>
+      <p class="summary">Astrophyzix.com is the publication of the Astrophyzix™ Digital Observatory, offering unpaywalled, evidence‑driven analysis and real‑time monitoring of PHAs and NEOs. Our tracking consoles and reporting systems use and provide access to official NASA CNEOS Scout, JPL CAD, NeoWs, JPL SBDB, Horizons and NOAA observational datasets, peer‑reviewed sources, and high‑precision numerical methods (IEEE‑754 Float64, RKN4). Designed for students,…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.astrophyzix.com/p/float64-nbody-live-apophis-tracker.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.notateslaapp.com/news/4490/tesla-to-make-design-and-software-for-model-s-and-model-x-open-source" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://www.notateslaapp.com/img/containers/article_images/multiple-models/group_61.jpg/a5998e4a257ffa22007f86e33f4a53e4/group_61.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-27T17:06:07+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Tesla to make design and software for Model S and Model X open source</h2>
+      <p class="summary">Three years ago, Tesla published all the design, theory, research , and development documentation for the original 2012 Tesla Roadster on their Service website. These detailed manuals and documents go deep into the various parts of the Roadster, covering everything from suspension geometry and the system layout for battery cooling to the various pieces of software used for the microcontrollers throughout the vehicle. Now, Elon Musk has confirmed…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.notateslaapp.com/news/4490/tesla-to-make-design-and-software-for-model-s-and-model-x-open-source" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://medium.com/pinterest-engineering/pinner-progression-better-use-case-representation-driving-weekly-active-user-growth-at-pinterest-bd2131ab238a?source=rss----4c5a5f6279b6---4" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(21,45%,32%),hsl(71,50%,18%))"><img src="https://cdn-images-1.medium.com/max/1024/1*fGXGoS1n8x3Sh9cMYI3CoQ.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PE</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Pinterest Engineering</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T16:01:02+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Pinner Progression: Better Use-Case Representation Driving Weekly Active User Growth at Pinterest</h2>
+      <p class="summary">Part 1 of 2 Authors Personalization (Homefeed): Yuke Yan, Chuxi Wang, Andreanne Lemay, Olafur Gudmundsson, Anna Kiyantseva, Krystal Benitez, Jongho Kim, Jiacong He, Rahul Goutam, James Li, Dylan Wang User Understanding: Simin Li, Sufyan Suliman, Yingjian Ding, Hongbo Deng Data Science: Armando Ordorica, Yan Chen, Ellie Zhang, Karim Wahba Introduction Pinterest’s mission is to help people discover the inspiration to create a life they love. Our…</p>
+      <div class="actions">
+        <a class="read-link" href="https://medium.com/pinterest-engineering/pinner-progression-better-use-case-representation-driving-weekly-active-user-growth-at-pinterest-bd2131ab238a?source=rss----4c5a5f6279b6---4" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/open-sourcing-our-privacy-proxy-cli/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01KYB3B0M3D9ZG9YT8JFQYHKRB.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>We’re open-sourcing our privacy proxy CLI</h2>
+      <p class="summary">pvcli is a curl-like tool designed to simplify the testing of complex privacy protocols like OHTTP.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/open-sourcing-our-privacy-proxy-cli/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://huggingface.co/blog/nvidia/cosmos-h-dreams" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(242,45%,32%),hsl(292,50%,18%))"><img src="https://cdn-uploads.huggingface.co/production/uploads/68c1279544f671330c604f4c/Cj0RZwvOSUhFGFEFKgyDw.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HF</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hugging Face Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T09:32:20+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>NVIDIA Cosmos-H-Dreams: Bringing Real-Time Generative Simulation to Surgical Robotics</h2>
+      <p class="summary">1. From Surgical World Model to Interactive Simulator 2. Distilling Cosmos-H-Surgical-Simulator for Real Time 2.1. A Surgical Teacher 2.2. Causal Warmup 2.3. Self-Forcing Distillation 3. FlashDreams: The Real-Time Inference Engine 4. Adapting to Your Own Data 5. What Is Next: Toward Closed-Loop Surgical Physical AI 6. Get Started Today Surgical robotics is moving quickly from teleoperation toward increasingly capable vision-language-action…</p>
+      <div class="actions">
+        <a class="read-link" href="https://huggingface.co/blog/nvidia/cosmos-h-dreams" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/ai-customer-service" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-02/2026-01-ogimages-blogs-4-personas-ai-agents-2b-og-1200x628.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T08:42:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>AI customer service: strategy, agents, and solutions guide</h2>
+      <p class="summary">AI customer service refers to the use of artificial intelligence — including natural language processing, ...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/ai-customer-service" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://news.ycombinator.com/item?id=49066659" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T08:29:50+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Ask HN: Where do those LLM-generated outreach emails come from?</h2>
+      <p class="summary">I have started getting daily LLM-written outreach emails. They all follow the same exact pattern, but come from different people pitching different vibe-coded things. The authors are real people with LinkedIn profiles, usually AI gurus, rarely experts in their niche. The message is usually targeted compliment &gt; pitch &gt; call to action. The compliment is the biggest tell because it&#x27;s so neat and specific. My question: which tool are they all…</p>
+      <div class="actions">
+        <a class="read-link" href="https://news.ycombinator.com/item?id=49066659" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/ai-literacy" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-02/2026-01-ogimages-blogs-4-personas-ai-agents-2b-og-1200x628.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T08:05:38+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Building AI Literacy: Frameworks, Tools, and Practices</h2>
+      <p class="summary">AI literacy is an individual&#x27;s ability to comprehend and effectively utilize AI tools...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/ai-literacy" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.debian.org/vote/2026/vote_002#texta" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T07:26:13+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>General Resolution: LLM Usage in Debian</h2>
+      <p class="summary">This proposal aims to expressly forbid any contributions to Debian written with the use or assistance of large language models (LLMs) or other generative AI tools. The scope of this GR is (non-exhaustive): Debian source packages Official Debian project software, such as lintian Debian web resources Documentation and translations added by Debian contributors Official communication from Debian It does not include: Upstream projects using LLMs for…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.debian.org/vote/2026/vote_002#texta" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://fzakaria.com/2026/07/26/seriously-what-is-the-large-code-model-even-for" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T06:59:31+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Seriously, what is the large code-model even for?</h2>
+      <p class="summary">I have been working on making massive binaries possible at $DAYJOB$ . One of the Hail Marys that you should be able to rely on is the large code-model ( mcmodel=large ) as it makes no assumptions about size and distance of relocations. Large code model : The large code model makes no assumptions about addresses and sizes of sections. [ cite ] In a previous post , I documented how I hit simple performance bottlenecks that made me believe that the…</p>
+      <div class="actions">
+        <a class="read-link" href="https://fzakaria.com/2026/07/26/seriously-what-is-the-large-code-model-even-for" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://news.ycombinator.com/item?id=49065810" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T06:27:38+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Ask HN: Are we having a substantial increase of &quot;Show HN&quot; since LLM aided coding</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://news.ycombinator.com/item?id=49065810" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/CyrusNuevoDia/skill-language-server" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://opengraph.githubassets.com/6fb186964ca0c45439a4b7a1f956d68c6054f452e51263d67e5669926f4b6b4b/CyrusNuevoDia/skill-language-server" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T06:15:54+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: Skill-language-server – A language server for agent skills</h2>
+      <p class="summary">A language server for agent skills — /skill-name and $skill-name become real symbols in VS Code, Zed, Neovim, and Helix. ▸ completion w/ descriptions on / and $ ▸ &quot;did you mean&quot; on typos ▸ go to definition, find references ▸ F2 rename w/ editor undo — folder, frontmatter name: , and every reference update as one edit ▸ clickable links + semantic highlighting on resolved references Skills, CLAUDE.md / AGENTS.md , and agent files reference each…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/CyrusNuevoDia/skill-language-server" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://twitter.com/TimSweeneyEpic/status/2081458495006634477" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://pbs.twimg.com/profile_images/795819168629198849/SBY3ARvZ_200x200.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T05:38:17+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Doing general vibe math in Programming Language Theory</h2>
+      <p class="summary">One thing that&#x27;s abundantly clear when doing general vibe math in Programming Language Theory is that one navigates related fields and topics at a vastly higher rate than when doing old school research, maybe 100x or 1000x, because it&#x27;s so much easier to explore related topics</p>
+      <div class="actions">
+        <a class="read-link" href="https://twitter.com/TimSweeneyEpic/status/2081458495006634477" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.oist.jp/news-center/news/2026/7/24/curious-robots-mimic-how-children-can-learn-understand-language" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://www.oist.jp/sites/default/files/styles/open_graph/public/2026-07/20260625curious%20robots-header%20design-3.jpg?h=d1cb525d&amp;itok=s966lH_O" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T05:24:54+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Study: Curious robots mimic how children can learn to understand language</h2>
+      <p class="summary">Rewarding AI for playful behavior helps them learn tasks much more efficiently than rote instruction and provides valuable insights into human language acquisition. To help answer this question and elucidate the mechanisms of language acquisition more generally, researchers at the Okinawa Institute of Science and Technology (OIST) have created a virtual robot with a brain-inspired neural network and tested its performance after giving it the…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.oist.jp/news-center/news/2026/7/24/curious-robots-mimic-how-children-can-learn-understand-language" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/getspur/spur/tree/main/crates/spur-solver" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://repository-images.githubusercontent.com/1211291099/b119b87a-25a4-438b-9154-c3a275e1b796" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-27T04:47:37+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: Spur solver – Z3-backed model-finder solved values for coding agent</h2>
+      <p class="summary">Hi guy, I am author of Spur , I want to share the Spur solver which is backed by z3 for neuro-symbolic reasoning, combining probabilistic language models with mathematical constraint solving The ideal here : LLM will give out constranst and translate the constranst to the z3 SMT language, then give out feedback loop between LLM model and neuro-symbolic reasoning to give out better reasioning looking for feedback and comments from HNs Thanks and…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/getspur/spur/tree/main/crates/spur-solver" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://machinelearning.apple.com/research/gh-esd" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(246,45%,32%),hsl(296,50%,18%))"><img src="https://mlr.cdn-apple.com/media/Home_1200x630_48225d82e9.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AM</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Apple Machine Learning Research</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-27T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>GH-ESD: Grounded Hypothesis-Driven Error Slice Discovery for Instance-Level Vision Tasks</h2>
+      <p class="summary">Systematic failures of vision models on semantically coherent subsets, known as error slices, reveal limitations in robustness and evaluation. Existing slice discovery approaches largely model slices as clusters in representation space or combinations of predefined attributes. While effective for image-level classification, such formulations are insufficient for instance-level tasks such as object detection and segmentation, where failures often…</p>
+      <div class="actions">
+        <a class="read-link" href="https://machinelearning.apple.com/research/gh-esd" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.amazon.science/news/amazon-is-investing-in-the-lean-focused-research-organization" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(24,45%,32%),hsl(74,50%,18%))"><img src="https://cdn.amazon.science/dims4/default/f7b06a9/2147483647/strip/true/crop/1783x936+0+33/resize/1200x630!/quality/90/?url=https%3A%2F%2Famzn-science-production-science.s3.us-east-1.amazonaws.com%2Fscience%2F0a%2F29%2F3399ffb4427aa372298e1f41d2ad%2Flean-logo.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AS</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Amazon Science</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-26T08:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Amazon is investing in the Lean Focused Research Organization</h2>
+      <p class="summary">As AI agents take on higher-stakes decisions, Lean programming language makes it possible to mathematically prove they will behave safely.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.amazon.science/news/amazon-is-investing-in-the-lean-focused-research-organization" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://news.ycombinator.com/item?id=49055494" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-26T07:01:45+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Connection-Agnostic Presence Tracking for Stateless Distributed Back Ends</h2>
+      <p class="summary">i was facing problem of tracking online presence of devices across processes. reconnection shouldn&#x27;t mark them as offline and then online again. and other scaling issues, like when connection moves from one process or another. so i wrote a simple paper with my ideas. i hope you guys will find it interesting. https://github.com/sku0x20/connection-agnostic-presence-tracking/releases/download/v1.3.0/main.pdf</p>
+      <div class="actions">
+        <a class="read-link" href="https://news.ycombinator.com/item?id=49055494" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://arxiv.org/abs/2607.21475" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://static.arxiv.org/icons/twitter/arxiv-logo-twitter-square.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-26T06:07:06+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Error Certificates for KV-Cache Eviction via Randomized Design</h2>
+      <p class="summary">arXivLabs is a framework that allows collaborators to develop and share new arXiv features directly on our website. Both individuals and organizations that work with arXivLabs have embraced and accepted our values of openness, community, excellence, and user data privacy. arXiv is committed to these values and only works with partners that adhere to them. Have an idea for a project that will add value for arXiv&#x27;s community? Learn more about…</p>
+      <div class="actions">
+        <a class="read-link" href="https://arxiv.org/abs/2607.21475" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://wilburhimself.github.io/blog/64-the-two-sources-of-noise-every-llm-evaluation-system-must-handle/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T05:57:24+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>The Two Sources of Noise Every LLM Evaluation System Must Handle</h2>
+      <p class="summary">We spent three weeks chasing ghosts in our prompt templates. We’d run our benchmark, get an 84%, tweak a word, and see it drop to 81%. We’d revert the change, run it again, and watch it swing to 87%. LLMs aren’t unit tests. They’re probabilistic, but we treated them like compiled binaries. When your test suite is a forecast, a single scoreboard is a lie. If you’ve run A/B tests or performance benchmarks, you’ve dealt with statistical noise. LLMs…</p>
+      <div class="actions">
+        <a class="read-link" href="https://wilburhimself.github.io/blog/64-the-two-sources-of-noise-every-llm-evaluation-system-must-handle/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://scalattice.com/blog/openai-sdk-scalattice/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://scalattice.com/resources/images/blog/cover-openai-sdk.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T05:43:09+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: I built a hypervisor and client for inference on consumer compute</h2>
+      <p class="summary">I&#x27;m the founder of Scalattice, this is my second company, third total product. I&#x27;m a 2x founder building some challenging software, some easy software, and some curiosity based tools that I&#x27;ve just always wanted to be a part of! So here is Scalattice. Scalattice is an OpenAI-compatible inference API. You keep the OpenAI SDK, swap base_url + API key, and call open models (Qwen3, Llama 3.3 70B, Gemma 3, DeepSeek R1, etc.). Inference is performed…</p>
+      <div class="actions">
+        <a class="read-link" href="https://scalattice.com/blog/openai-sdk-scalattice/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://kraghavan.ca/llm-infrastructure/inference/2026/04/14/re-introduction-to-inference.html" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://kraghavan.ca/assets/images/default-og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T05:18:42+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Introduction to LLM Inference</h2>
+      <p class="summary">An Engineer’s annotated tour through what actually happens when you hit send — from bytes to tokens to embeddings to attention to the word your model finally spits out. No skipped steps. No “and then magic happens.” Let me be honest with you. When I started working on LLM infrastructure, I had eleven years of distributed systems experience. I knew Kafka, Kubernetes, Prometheus. I could debug a partition rebalance in my sleep. And yet the first…</p>
+      <div class="actions">
+        <a class="read-link" href="https://kraghavan.ca/llm-infrastructure/inference/2026/04/14/re-introduction-to-inference.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://kraghavan.ca/llm-infrastructure/evaluation/2026/07/25/llm-as-a-judge-field-guide.html" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://kraghavan.ca/assets/images/default-og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T05:17:30+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>LLM-as-a-Judge Field Guide</h2>
+      <p class="summary">I wanted to actually understand LLM-as-a-judge instead of nodding along the way I used to with CAP theorem before I’d actually read the paper. So I built a proper research pipeline, tried to find something genuinely novel to say about it, and watched all five of my “novel” ideas get killed by papers published in the last few months. Here’s everything I learned along the way — with the receipts. Let me be honest about how this post happened,…</p>
+      <div class="actions">
+        <a class="read-link" href="https://kraghavan.ca/llm-infrastructure/evaluation/2026/07/25/llm-as-a-judge-field-guide.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/DioxusLabs/betlang/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://opengraph.githubassets.com/3f565836288e80941296d6cbbcb893db62132f4ff69f043f7104917a8de3f557/DioxusLabs/betlang" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T04:43:40+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Betlang – A programming language detection model in 50kb</h2>
+      <p class="summary">CPU source-language detection for code with a tiny 50kb model. Try it in browser here Use betlang::detect(source) for UTF-8 source strings or byte slices. It returns a Detection ; call Detection::language() to read the top language. Call Detection::top_languages() when you need ranked probabilities. asm , batch , c , clojure , cmake , cobol , cpp , cs , css , dart , dockerfile , elixir , erlang , gemfile , gemspec , go , gradle , groovy ,…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/DioxusLabs/betlang/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://tilelang.com/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T03:31:47+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Welcome to Tile Language</h2>
+      <p class="summary">Tile Language (tile-lang) is a concise domain-specific language designed to streamline the development of high-performance GPU/CPU kernels (e.g., GEMM, Dequant GEMM, FlashAttention, LinearAttention). By employing a Pythonic syntax with an underlying compiler infrastructure on top of TVM, tile-lang allows developers to focus on productivity without sacrificing the low-level optimizations necessary for state-of-the-art performance.</p>
+      <div class="actions">
+        <a class="read-link" href="https://tilelang.com/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://danluu.com/ai-coding/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T03:02:17+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Agentic test processes, LLM benchmarks, and other notes on agentic coding</h2>
+      <p class="summary">I&#x27;ve been using AI fairly heavily since last November and the whole thing is a funny experience . An agent will do something that, if a human did it, you&#x27;d immediately fire them. My reaction, of course, is to act as if this is great and spin up a thousand agents so they can do even more of that. Mid-last year, I had GPT (maybe 5.0 or 5.1) try to find the source of a bug . Naturally, this code didn&#x27;t have tests and git bisect wouldn&#x27;t work, and…</p>
+      <div class="actions">
+        <a class="read-link" href="https://danluu.com/ai-coding/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://philippdubach.com/posts/ai-can-now-design-drugs-in-seconds-we-still-cant-tell-you-if-they-work./" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://static.philippdubach.com/ograph/ograph-isomorphic-labs-isodde1.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-26T01:28:59+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>AI Can Now Design Drugs in Seconds; We Still Can&#x27;t Tell You If They Work</h2>
+      <p class="summary">No AI-discovered drug has ever received FDA approval. That sentence should sit uncomfortably next to every headline about Alphabet’s drug discovery spinoff. On February 10, Isomorphic Labs , the Google DeepMind spinoff focused on computational drug design, released IsoDDE: its Drug Design Engine. This isn’t a model or an AlphaFold upgrade. IsoDDE is a unified in silico drug discovery system that runs protein structure prediction, ligand binding,…</p>
+      <div class="actions">
+        <a class="read-link" href="https://philippdubach.com/posts/ai-can-now-design-drugs-in-seconds-we-still-cant-tell-you-if-they-work./" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://martin.janiczek.cz/2026/07/24/systems-and-delays.html" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-26T00:37:30+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Systems and Delays</h2>
+      <p class="summary">Leaving the house (and the country) for a week or two during the holiday season is a great time to get out of my stereotypical ways of passing free time (entirely too much YouTube, Lobste.rs, HackerNews and BlueSky) and try something else. For my recent vacation I have packed some grid paper to make a bitmap font, and two books: the first one was Nachové pustiny : a Czech post-apocalyptic novel to get some inspiration for my “Fallout but in…</p>
+      <div class="actions">
+        <a class="read-link" href="https://martin.janiczek.cz/2026/07/24/systems-and-delays.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.nepodb.com/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://nepodb.com/og-image.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-26T00:02:21+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Nepo – the largest database of nepotism and nepo babies</h2>
+      <p class="summary">A nepo baby is just a fancy way of saying someone who gets opportunities handed to them because their family is already famous, wealthy or influential. You know, in many ways, it is like being a part of royalty. Lucky them, huh?</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.nepodb.com/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.together.ai/blog/kimi-k3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(284,45%,32%),hsl(334,50%,18%))"><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a66e323d6a43b73ad0e5659_OG-image_20260726_Kimi%20k3%20vs.%20GPT%20SOL.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">TA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Together AI Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-26T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Kimi K3 vs GPT-5.6 Sol on DeepSWE: Cost, Coding, and Routing</h2>
+      <p class="summary">We ran 904 DeepSWE rollouts on Kimi K3 and GPT-5.6 Sol. Sol leads pass@1; Kimi K3 wins pass@4 at 2.8x the solves per dollar, and routing between them reaches ~85.6%.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.together.ai/blog/kimi-k3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/exoharness/exo/blob/main/docs/RSI.md" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://opengraph.githubassets.com/ad88b5e5034649f8e61d0dfc4579cf79f6b4b7251a01f2285caeac95ff460c40/exoharness/exo" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-25T22:07:46+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>A Systems View of Recursive Self Improvement</h2>
+      <p class="summary">RSI (recursive self improvement) is a commonly used phrase in AI. It&#x27;s generally used to describe using AI to speed up the process of making AI, even if just applying it to a narrow function, such as creating GPU kernels or data cleaning. This is an overly broad definition of recursive, and is better described as autocatalytic or using a technology to speed up the development of that technology. Computers, the steam engine, and the Internet have…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/exoharness/exo/blob/main/docs/RSI.md" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.maxmynter.com/pages/blog/jobhunt" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-25T21:19:42+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Becoming a Research Engineer at a Big LLM Lab</h2>
+      <p class="summary">Note : This is also published on Substack (where you can give me your mail if you want emails whenever I publish something). A couple of days ago, I signed as a research engineer with Mistral, one of the few ML foundation model labs with more than a billion-dollar funding. My excitement on Twitter found quite some resonance â partly in the form of questions for advice. Getting here was not an accident. I have strategically worked towards this…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.maxmynter.com/pages/blog/jobhunt" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.roderick.dev/writing/2026-07-25-systems-axioms-impacts/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://www.roderick.dev/og-image.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-25T17:10:18+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>All things are systems – the Idlewild Acres case</h2>
+      <p class="summary">Jeffrey Howard is an old friend. We have known each other for a long time, and I was fascinated to read some of his recent reporting. He recently reported on residents of Idlewild Acres, a manufactured-home community in Morganton, North Carolina, who are organizing against substantial increases in their lot rent. 1 Residents told Jeffrey that some increases were announced before existing leases expired, that infrastructure remained in poor…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.roderick.dev/writing/2026-07-25-systems-axioms-impacts/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://areadenial.games/design/preface#00-01" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://areadenial.games/images/hero-logo.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-07-25T12:51:48+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>League of Legends designer shares game design field manual</h2>
+      <p class="summary">Players don’t learn what you value from your patch notes. They learn it from your systems. Which scoreboard you ship, which numbers you hide, how much friction you keep, what you charge for queuing into a ranked match: every one of those is a statement about who you think the player is. And players read all of it. They’re the most thorough close-readers any medium has ever produced, and they’ll find the sentence you didn’t know you wrote. I’ve…</p>
+      <div class="actions">
+        <a class="read-link" href="https://areadenial.games/design/preface#00-01" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/bgp-origin-attribute/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01KYAG27J7320R6RF5C4SGSTK1.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-24T17:25:28+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>BGP ORIGIN attribute manipulation and its impact on the Internet</h2>
+      <p class="summary">By doing in-depth testing, we found nearly 70% of BGP paths experience ORIGIN attribute rewrites by transit providers seeking traffic advantages. We examine the global impact of this practice and argue for deprecating ORIGIN in route selection.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/bgp-origin-attribute/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://machinelearning.apple.com/research/lead-no-recovery-bottleneck" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(246,45%,32%),hsl(296,50%,18%))"><img src="https://mlr.cdn-apple.com/media/Home_1200x630_48225d82e9.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AM</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Apple Machine Learning Research</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-07-24T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>LEAD: Breaking the No-Recovery Bottleneck in Long-Horizon Reasoning</h2>
+      <p class="summary">Long-horizon execution in Large Language Models (LLMs) remains unstable even when high-level strategies are provided. Evaluating on controlled algorithmic puzzles, we demonstrate that while decomposition is essential for stability, extreme decomposition creates a “no-recovery bottleneck”. We show that this bottleneck becomes critical due to highly non-uniform error distribution, where consistent errors on a few “hard” steps become irreversible.…</p>
+      <div class="actions">
+        <a class="read-link" href="https://machinelearning.apple.com/research/lead-no-recovery-bottleneck" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.together.ai/blog/kimi-k3-vs-claude-fable-5-on-deepswe-cost-and-coding" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(284,45%,32%),hsl(334,50%,18%))"><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6166c6c57d9851e8505dbc_KimiK3vsFable5.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">TA</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Together AI Blog</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-07-24T00:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Kimi K3 vs Claude Fable 5 on DeepSWE: Cost and Coding</h2>
+      <p class="summary">We ran 452 DeepSWE rollouts on Kimi K3 and Claude Fable 5. Fable leads pass@1 by 1.4 points; Kimi K3 wins pass@4 and delivers 2.8x the solves per dollar.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.together.ai/blog/kimi-k3-vs-claude-fable-5-on-deepswe-cost-and-coding" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/how-fda-built-ai-platform-85-its-staff-now-use-daily" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/blog-og-fda.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-23T19:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>How the FDA Built an AI Platform That 85% of Its Staff Now Use Daily</h2>
+      <p class="summary">“We showed the value of having a foundational data platform, and that success story...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/how-fda-built-ai-platform-85-its-staff-now-use-daily" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/introducing-cache-response-rules/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01KY7Z140JM9461HHN0FHSNDVQ.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-23T18:40:38+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Introducing Cache Response Rules</h2>
+      <p class="summary">Perhaps you’ve seen something that should sail out of cache get dragged back to the origin by a stray Set-Cookie or Cache-Control, headers that can be difficult to change on the origin itself. Cache Response Rules is the fix, applied at the right time.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/introducing-cache-response-rules/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/permission-isnt-purpose-intent-based-authorization-omnigent" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/image3.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-23T18:05:06+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Permission isn&#x27;t purpose: Intent-based authorization in Omnigent</h2>
+      <p class="summary">In earlier posts, we introduced contextual policies in Omnigent and showed them blocking...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/permission-isnt-purpose-intent-based-authorization-omnigent" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/provisioning-agentic-era-how-databricks-built-self-serve-infrastructure-vending-machine" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/blog-og-vending-machine.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-23T18:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Provisioning for the Agentic Era: How Databricks Built a Self-Serve Infrastructure Vending Machine</h2>
+      <p class="summary">At Databricks, our field engineering organization exists to help customers succeed....</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/provisioning-agentic-era-how-databricks-built-self-serve-infrastructure-vending-machine" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/why-frontier-data-agent-outperforms-general-coding-agents-quality-and-cost" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/Untitled-design-3.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-23T15:33:58+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Why A Frontier Data Agent Outperforms General Coding Agents in Quality and Cost</h2>
+      <p class="summary">Conventional wisdom in agentic AI says that better answers cost more tokens: let...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/why-frontier-data-agent-outperforms-general-coding-agents-quality-and-cost" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/connect-amazon-s3-data-databricks-delegated-iam-permissions" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-07/2026-07-Blog-Connect-Amazon-S3-data-to-Databricks-with-Delegated-IAM-Permissions-OG-1200x628-2x.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-07-23T15:30:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Connect Amazon S3 data to Databricks with Delegated IAM Permissions</h2>
+      <p class="summary">Importance of Simpler S3 connectivityConnecting Amazon S3 is one of the most important...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/connect-amazon-s3-data-databricks-delegated-iam-permissions" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+<div class="empty" id="empty"><b>Nothing here</b><span>Tap ☆ on any card to keep it, or pick another category.</span></div>
+<div class="card"><div class="card-inner"><div class="body" style="justify-content:center;text-align:center">
+  <h2>That's all for now 🎉</h2>
+  <p class="summary" style="text-align:center">Updated Jul 30, 2026 14:05 UTC · refreshes daily</p>
+</div></div></div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  const READ_KEY = "td_read";
+  const SAVED_KEY = "td_saved";
+  const store = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+  const load = (k, fallback) => {
+    try { return JSON.parse(localStorage.getItem(k)) ?? fallback; }
+    catch { return fallback; }
+  };
+
+  let readMap = load(READ_KEY, {});
+  let saved = new Set(load(SAVED_KEY, []));
+  let category = "All";
+  let view = "all";
+
+  const cutoff = Date.now() - 30 * 864e5;
+  for (const url in readMap) if (readMap[url] < cutoff) delete readMap[url];
+  store(READ_KEY, readMap);
+
+  const feed = document.getElementById("feed");
+  const counterEl = document.getElementById("counter");
+  const savedCountEl = document.getElementById("saved-count");
+  const readCountEl = document.getElementById("read-count");
+  const emptyEl = document.getElementById("empty");
+  const cards = [...document.querySelectorAll(".card[data-url]")];
+
+  function updateReadBadge() {
+    const n = cards.reduce((sum, c) => sum + (readMap[c.dataset.url] ? 1 : 0), 0);
+    readCountEl.textContent = n ? "· " + n : "";
+  }
+
+  // Relative times, computed at view time from the embedded ISO dates
+  for (const el of document.querySelectorAll("[data-published]")) {
+    const mins = Math.max(1, Math.round((Date.now() - new Date(el.dataset.published)) / 6e4));
+    el.textContent =
+      mins < 60 ? mins + "m ago" :
+      mins < 1440 ? Math.round(mins / 60) + "h ago" :
+      Math.round(mins / 1440) + "d ago";
+  }
+
+  function apply() {
+    let shown = 0;
+    for (const card of cards) {
+      const url = card.dataset.url;
+      const isRead = !!readMap[url];
+      const inView = view === "saved" ? saved.has(url)
+                   : view === "read" ? isRead
+                   : !isRead;
+      const ok = inView && (category === "All" || card.dataset.category === category);
+      card.classList.toggle("hidden", !ok);
+      if (ok) shown++;
+    }
+    emptyEl.style.display = shown ? "none" : "flex";
+    const label = view === "all" ? " unread" : view === "read" ? " read" : " saved";
+    counterEl.textContent = shown ? shown + label : "";
+    savedCountEl.textContent = saved.size ? "· " + saved.size : "";
+    updateReadBadge();
+    feed.scrollTop = 0;
+  }
+
+  for (const card of cards) {
+    const url = card.dataset.url;
+    if (readMap[url]) card.querySelector(".seen").textContent = "✓ seen";
+    const btn = card.querySelector(".save-btn");
+    if (saved.has(url)) { btn.classList.add("saved"); btn.textContent = "★"; }
+    btn.onclick = () => {
+      if (saved.has(url)) { saved.delete(url); btn.classList.remove("saved"); btn.textContent = "☆"; }
+      else { saved.add(url); btn.classList.add("saved"); btn.textContent = "★"; }
+      store(SAVED_KEY, [...saved]);
+      if (view === "saved") apply();
+      else savedCountEl.textContent = saved.size ? "· " + saved.size : "";
+    };
+  }
+
+  const seenObserver = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (e.intersectionRatio >= 0.6) {
+        const url = e.target.dataset.url;
+        if (!readMap[url]) {
+          readMap[url] = Date.now();
+          store(READ_KEY, readMap);
+          e.target.querySelector(".seen").textContent = "✓ seen";
+          updateReadBadge();
+        }
+      }
+    }
+  }, { threshold: 0.6 });
+  for (const card of cards) seenObserver.observe(card);
+
+  for (const chip of document.querySelectorAll(".chip")) {
+    chip.onclick = () => {
+      document.querySelector(".chip.active").classList.remove("active");
+      chip.classList.add("active");
+      category = chip.dataset.category;
+      apply();
+    };
+  }
+
+  function setView(v) {
+    view = v;
+    document.getElementById("tab-all").classList.toggle("active", v === "all");
+    document.getElementById("tab-read").classList.toggle("active", v === "read");
+    document.getElementById("tab-saved").classList.toggle("active", v === "saved");
+    apply();
+  }
+  document.getElementById("tab-all").onclick = () => setView("all");
+  document.getElementById("tab-read").onclick = () => setView("read");
+  document.getElementById("tab-saved").onclick = () => setView("saved");
+
+  document.addEventListener("keydown", e => {
+    const dir = { ArrowDown: 1, j: 1, ArrowUp: -1, k: -1 }[e.key];
+    if (!dir) return;
+    e.preventDefault();
+    feed.scrollBy({ top: dir * feed.clientHeight, behavior: "smooth" });
+  });
+
+  apply();
+})();
+</script>
+</body>
+</html>

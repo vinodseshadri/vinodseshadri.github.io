@@ -16,8 +16,4 @@ I hold a patent in reinforcement learning ([US10725899B2](https://patents.google
 
 I'm hands-on daily — Python is my primary language — and I'm currently deepest in Agentic AI architecture, multi-agent orchestration, and LLM-as-a-Judge evaluation frameworks.
 
-## Projects
-
-[**Tech Design**](/techdesign/) — a daily-refreshed, swipeable feed of engineering blog posts on LLM inference, systems design, and AI infra.
-
 Use the sections on the left to see my full experience, skills, patents, and the open-source projects I maintain.

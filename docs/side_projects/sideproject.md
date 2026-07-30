@@ -1,4 +1,11 @@
-# Open Source Projects
+# Projects
+
+### [Tech Design](/techdesign/)
+*A daily-refreshed, swipeable feed of engineering blog posts on LLM inference, systems design, and AI infra.*
+
+---
+
+## Open Source Projects
 
 I open-source projects that reflect the kind of systems I build professionally — production-shaped, not just notebooks. Code for all of these is on [GitHub](https://github.com/vinodseshadri).
 

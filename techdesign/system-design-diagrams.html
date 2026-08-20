@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Top 15 Staff-Level System Design Interview Questions — Architecture Diagrams</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --text: #e6edf3;
+    --text-dim: #9aa4b2;
+    --accent: #4493f8;
+    --chip: #21262d;
+    --border: #30363d;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa;
+      --card: #ffffff;
+      --text: #1f2328;
+      --text-dim: #59636e;
+      --accent: #0969da;
+      --chip: #eaeef2;
+      --border: #d1d9e0;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px 16px 80px;
+  }
+  header {
+    max-width: 900px;
+    margin: 0 auto 28px;
+  }
+  h1 {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  header p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  nav {
+    max-width: 900px;
+    margin: 20px auto 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  nav h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  nav ol {
+    columns: 2;
+    column-gap: 24px;
+    padding-left: 18px;
+    font-size: 13.5px;
+  }
+  nav li { margin-bottom: 6px; break-inside: avoid; }
+  nav a { color: var(--accent); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 18px 22px;
+    scroll-margin-top: 16px;
+  }
+  section h2 {
+    font-size: 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  section h2 .num {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  section p.blurb {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin: 6px 0 14px;
+  }
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: -6px 0 14px;
+  }
+  .examples .examples-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-right: 2px;
+  }
+  .examples .chip {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--chip);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+  .diagram {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    overflow-x: auto;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .back-to-top {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  .back-to-top:hover { color: var(--accent); }
+  footer {
+    max-width: 900px;
+    margin: 32px auto 0;
+    color: var(--text-dim);
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Top 15 Staff-Level System Design Interview Questions</h1>
+  <p>Architecture diagrams only — each is a common high-level reference shape for the interview, not a complete production design.</p>
+</header>
+
+<nav id="top">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#q1">URL Shortener</a></li>
+    <li><a href="#q2">Rate Limiter</a></li>
+    <li><a href="#q3">Distributed Cache</a></li>
+    <li><a href="#q4">Chat / Messaging System</a></li>
+    <li><a href="#q5">News Feed System</a></li>
+    <li><a href="#q6">Web Crawler</a></li>
+    <li><a href="#q7">Notification System</a></li>
+    <li><a href="#q8">Distributed Job Scheduler</a></li>
+    <li><a href="#q9">Distributed File Storage</a></li>
+    <li><a href="#q10">Video Streaming Platform</a></li>
+    <li><a href="#q11">Payment / Ledger System</a></li>
+    <li><a href="#q12">Ride-Sharing System</a></li>
+    <li><a href="#q13">Search Autocomplete</a></li>
+    <li><a href="#q14">Distributed Message Queue</a></li>
+    <li><a href="#q15">Distributed Key-Value Store</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="q1">
+  <h2><span class="num">1.</span> Design a URL Shortener (e.g. TinyURL, bit.ly)</h2>
+  <p class="blurb">Tests ID generation strategy, read/write skew, and cache-aside for a read-heavy workload.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">bit.ly</span><span class="chip">TinyURL</span><span class="chip">Twitter's t.co</span><span class="chip">Google's goo.gl (retired)</span>
+  </p>
+  <pre class="mermaid diagram">
+graph LR
+  Client -->|POST long URL| LB[Load Balancer]
+  Client2[Client] -->|GET short URL| LB
+  LB --> App[App Servers]
+  App -->|check| Cache[(Redis Cache)]
+  App -->|allocate ID| KeyGen[Key Gen Service<br/>Base62 counter / Snowflake]
+  App -->|read/write mapping| DB[(Sharded DB<br/>short_url -&gt; long_url)]
+  Cache -.miss.-> DB
+  App --> CDN[CDN / Edge Redirect Cache]
+  </pre>
+</section>
+
+<section id="q2">
+  <h2><span class="num">2.</span> Design a Rate Limiter (e.g. Stripe API, Cloudflare)</h2>
+  <p class="blurb">Tests token-bucket/sliding-window algorithms and running limits correctly across a distributed fleet.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Stripe API throttling</span><span class="chip">GitHub API rate limits</span><span class="chip">Cloudflare edge limiter</span><span class="chip">AWS API Gateway</span>
+  </p>
+  <pre class="mermaid diagram">
+graph LR
+  Client --> Gateway[API Gateway]
+  Gateway --> RL[Rate Limiter Middleware]
+  RL -->|incr + TTL counters| Store[(Redis Cluster<br/>token/window counters)]
+  RL -->|allowed| Service[Downstream Service]
+  RL -->|denied 429| Client
+  Config[Config Service<br/>per-user / per-route limits] --> RL
+  RL --> Metrics[Metrics / Alerting]
+  </pre>
+</section>
+
+<section id="q3">
+  <h2><span class="num">3.</span> Design a Distributed Cache (e.g. Memcached, Redis)</h2>
+  <p class="blurb">Tests consistent hashing, eviction policy, replication, and cache invalidation.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Facebook's Memcache tier</span><span class="chip">Netflix EVCache</span><span class="chip">Twitter's Redis fleet</span><span class="chip">AWS ElastiCache</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client --> Router[Client-side Router<br/>Consistent Hash Ring]
+  Router --> N1[Cache Node 1]
+  Router --> N2[Cache Node 2]
+  Router --> N3[Cache Node 3]
+  N1 <-->|replicate| N2
+  N2 <-->|replicate| N3
+  N1 -.miss.-> DB[(Origin DB)]
+  N2 -.miss.-> DB
+  N3 -.miss.-> DB
+  Coordinator[Membership / Gossip<br/>e.g. ZooKeeper] --- N1
+  Coordinator --- N2
+  Coordinator --- N3
+  </pre>
+</section>
+
+<section id="q4">
+  <h2><span class="num">4.</span> Design a Chat / Messaging System (e.g. WhatsApp)</h2>
+  <p class="blurb">Tests connection management at scale, delivery guarantees, and fan-out for group chats.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">WhatsApp</span><span class="chip">Slack</span><span class="chip">Facebook Messenger</span><span class="chip">Discord</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  UserA[Client A] <-->|WebSocket| GW1[Connection Gateway 1]
+  UserB[Client B] <-->|WebSocket| GW2[Connection Gateway 2]
+  GW1 --> Router[Message Router / Presence Service]
+  GW2 --> Router
+  Router --> Queue[(Message Queue<br/>per-user topics)]
+  Router --> MsgStore[(Message Store<br/>Cassandra-like)]
+  Router --> Presence[(Presence Store<br/>Redis)]
+  Router -->|push if offline| PushSvc[Push Notification Service]
+  Queue --> GW2
+  </pre>
+</section>
+
+<section id="q5">
+  <h2><span class="num">5.</span> Design a News Feed System (e.g. Twitter/Facebook)</h2>
+  <p class="blurb">Tests fan-out-on-write vs. fan-out-on-read trade-offs for celebrity/hot users.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Facebook News Feed</span><span class="chip">Twitter/X Timeline</span><span class="chip">Instagram Feed</span><span class="chip">LinkedIn Feed</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Author[Author posts] --> API[Post Service]
+  API --> PostStore[(Post Store)]
+  API --> FanoutWorker[Fan-out Worker]
+  FanoutWorker -->|normal user: push| FeedCache[(Per-user Feed Cache<br/>Redis)]
+  FanoutWorker -.celebrity: skip push.-> PostStore
+  Reader[Client reads feed] --> FeedSvc[Feed Aggregation Service]
+  FeedSvc --> FeedCache
+  FeedSvc -->|merge celebrity posts on read| PostStore
+  FeedSvc --> Ranker[Ranking / ML Scoring]
+  </pre>
+</section>
+
+<section id="q6">
+  <h2><span class="num">6.</span> Design a Web Crawler (e.g. Googlebot)</h2>
+  <p class="blurb">Tests politeness/dedup at scale, distributed frontier management, and freshness re-crawl policy.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Googlebot</span><span class="chip">Bingbot</span><span class="chip">Common Crawl</span><span class="chip">Internet Archive's crawler</span>
+  </p>
+  <pre class="mermaid diagram">
+graph LR
+  Seeds[Seed URLs] --> Frontier[(URL Frontier<br/>priority queue, per-domain)]
+  Frontier --> Fetchers[Fetcher Workers]
+  Fetchers --> Dedup{Seen URL?<br/>Bloom Filter}
+  Dedup -->|no| Parser[Parser / Extractor]
+  Dedup -->|yes| Drop[Discard]
+  Parser --> Frontier
+  Parser --> ContentStore[(Content Store)]
+  Fetchers --> DNS[DNS Cache]
+  Fetchers --> Robots[robots.txt / Politeness Rate Limiter]
+  </pre>
+</section>
+
+<section id="q7">
+  <h2><span class="num">7.</span> Design a Notification System (e.g. Uber trip alerts)</h2>
+  <p class="blurb">Tests multi-channel fan-out (push/SMS/email), dedup, retries, and user preference handling.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Uber trip &amp; ETA alerts</span><span class="chip">Amazon order updates</span><span class="chip">Facebook notifications</span><span class="chip">Slack notifications</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Producer[Upstream Services] --> Queue[(Notification Queue)]
+  Queue --> Worker[Notification Worker]
+  Worker --> Prefs[(User Preference Store)]
+  Worker --> Dedup[Dedup / Throttle Check]
+  Worker --> Push[Push Gateway<br/>APNs / FCM]
+  Worker --> SMS[SMS Gateway]
+  Worker --> Email[Email Gateway]
+  Worker --> Log[(Delivery Log / Status Store)]
+  Push --> Retry[Retry / DLQ]
+  SMS --> Retry
+  Email --> Retry
+  </pre>
+</section>
+
+<section id="q8">
+  <h2><span class="num">8.</span> Design a Distributed Job Scheduler (e.g. cron-at-scale)</h2>
+  <p class="blurb">Tests leader election, exactly-once trigger semantics, and handling of missed/overlapping runs.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Airbnb Chronos / Airflow</span><span class="chip">Kubernetes CronJob</span><span class="chip">AWS EventBridge Scheduler</span><span class="chip">Google Cloud Scheduler</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  API[Scheduling API] --> JobStore[(Job Definitions Store)]
+  Scanner[Scanner / Ticker<br/>leader-elected] --> JobStore
+  Scanner -->|due jobs| Queue[(Execution Queue)]
+  Lock[Distributed Lock<br/>ZooKeeper / etcd] --- Scanner
+  Queue --> Executors[Worker Pool]
+  Executors --> ResultStore[(Execution History Store)]
+  Executors -->|fail| Retry[Retry with Backoff]
+  Executors --> Metrics[Monitoring / Alerting]
+  </pre>
+</section>
+
+<section id="q9">
+  <h2><span class="num">9.</span> Design Distributed File Storage (e.g. Google Drive/Dropbox)</h2>
+  <p class="blurb">Tests chunking, dedup, metadata vs. blob separation, and multi-device sync/conflict resolution.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Dropbox</span><span class="chip">Google Drive</span><span class="chip">Box</span><span class="chip">OneDrive</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client -->|sync client, chunk + hash| API[Metadata API]
+  API --> MetaDB[(Metadata DB<br/>file tree, versions)]
+  Client -->|upload changed chunks| BlockSvc[Block Storage Service]
+  BlockSvc --> ObjStore[(Object Storage<br/>S3-like, content-addressed)]
+  API --> Notif[Change Notification Service]
+  Notif --> OtherDevices[Other Client Devices]
+  API --> ConflictResolver[Sync / Conflict Resolver]
+  </pre>
+</section>
+
+<section id="q10">
+  <h2><span class="num">10.</span> Design a Video Streaming Platform (e.g. YouTube/Netflix)</h2>
+  <p class="blurb">Tests upload transcoding pipelines, adaptive bitrate delivery, and CDN offload strategy.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">YouTube</span><span class="chip">Netflix</span><span class="chip">Twitch (live variant)</span><span class="chip">Disney+</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Uploader[Uploader] --> UploadSvc[Upload Service]
+  UploadSvc --> RawStore[(Raw Video Store)]
+  UploadSvc --> TranscodeQueue[(Transcode Queue)]
+  TranscodeQueue --> Transcoders[Transcoding Workers<br/>multiple bitrates/codecs]
+  Transcoders --> SegStore[(Segmented Video Store<br/>HLS/DASH chunks)]
+  SegStore --> CDN[CDN Edge Nodes]
+  Viewer[Viewer] --> CDN
+  Viewer --> Metadata[Metadata / Recommendation Service]
+  Metadata --> MetaDB[(Video Metadata DB)]
+  </pre>
+</section>
+
+<section id="q11">
+  <h2><span class="num">11.</span> Design a Payment / Ledger System (e.g. Stripe, PayPal)</h2>
+  <p class="blurb">Tests idempotency, exactly-once money movement, double-entry ledger correctness, and reconciliation.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Stripe Ledger</span><span class="chip">PayPal</span><span class="chip">Square</span><span class="chip">Uber's internal payments</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client --> API[Payment API<br/>idempotency key]
+  API --> RiskSvc[Fraud / Risk Check]
+  API --> LedgerSvc[Ledger Service<br/>double-entry]
+  LedgerSvc --> LedgerDB[(Ledger DB<br/>ACID, append-only)]
+  API --> PSPGateway[External PSP / Bank Gateway]
+  PSPGateway --> Webhook[Webhook Handler]
+  Webhook --> LedgerSvc
+  LedgerSvc --> Reconciler[Reconciliation Job]
+  Reconciler --> LedgerDB
+  Reconciler --> PSPGateway
+  </pre>
+</section>
+
+<section id="q12">
+  <h2><span class="num">12.</span> Design a Ride-Sharing System (e.g. Uber)</h2>
+  <p class="blurb">Tests geospatial indexing for driver matching, real-time location updates, and dispatch under load.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Uber</span><span class="chip">Lyft</span><span class="chip">Grab</span><span class="chip">DoorDash dispatch (similar problem)</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Rider[Rider App] --> API[Trip Service]
+  Driver[Driver App] -->|location ping| LocSvc[Location Ingestion Service]
+  LocSvc --> GeoIndex[(Geo Index<br/>QuadTree / Geohash)]
+  API --> Matcher[Matching / Dispatch Service]
+  Matcher --> GeoIndex
+  Matcher --> Pricing[Pricing / ETA Service]
+  Matcher -->|offer| Driver
+  API --> TripDB[(Trip Store)]
+  LocSvc --> LocStream[(Location Stream<br/>Kafka)]
+  </pre>
+</section>
+
+<section id="q13">
+  <h2><span class="num">13.</span> Design a Search Autocomplete / Typeahead (e.g. Google Search)</h2>
+  <p class="blurb">Tests trie/prefix indexing, ranking by popularity, and keeping suggestions fresh at low latency.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Google Search suggestions</span><span class="chip">Amazon product search</span><span class="chip">Elasticsearch Completion Suggester</span>
+  </p>
+  <pre class="mermaid diagram">
+graph LR
+  Client -->|keystroke| API[Suggestion API]
+  API --> Cache[(Hot Prefix Cache<br/>Redis)]
+  Cache -.miss.-> TrieSvc[Trie Service<br/>top-K per prefix]
+  TrieSvc --> TrieStore[(Precomputed Trie<br/>sharded by prefix)]
+  Logs[Query Logs] --> Aggregator[Offline Aggregator<br/>batch job]
+  Aggregator --> TrieBuilder[Trie Builder]
+  TrieBuilder --> TrieStore
+  </pre>
+</section>
+
+<section id="q14">
+  <h2><span class="num">14.</span> Design a Distributed Message Queue (e.g. Kafka)</h2>
+  <p class="blurb">Tests partitioning, replication, consumer offset management, and delivery guarantees.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Apache Kafka</span><span class="chip">AWS Kinesis</span><span class="chip">RabbitMQ</span><span class="chip">Google Cloud Pub/Sub</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Producer[Producers] -->|key hash| Broker1[Broker 1<br/>Partition 0 leader]
+  Producer --> Broker2[Broker 2<br/>Partition 1 leader]
+  Broker1 -->|replicate| Broker2
+  Broker2 -->|replicate| Broker3[Broker 3<br/>replica]
+  Coordinator[Cluster Coordinator<br/>Controller / KRaft] --- Broker1
+  Coordinator --- Broker2
+  Coordinator --- Broker3
+  Consumer1[Consumer Group A] -->|poll + commit offset| Broker1
+  Consumer2[Consumer Group B] -->|poll + commit offset| Broker2
+  OffsetStore[(Offset Store)] --- Consumer1
+  OffsetStore --- Consumer2
+  </pre>
+</section>
+
+<section id="q15">
+  <h2><span class="num">15.</span> Design a Distributed Key-Value Store (e.g. DynamoDB)</h2>
+  <p class="blurb">Tests consistent hashing, tunable consistency (quorum reads/writes), and conflict resolution (vector clocks).</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Amazon DynamoDB</span><span class="chip">Apache Cassandra</span><span class="chip">Riak</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client --> Coordinator[Coordinator Node<br/>any node, request routed via hash ring]
+  Coordinator -->|write, W replicas| N1[Node A]
+  Coordinator --> N2[Node B]
+  Coordinator --> N3[Node C]
+  N1 <-.hinted handoff.-> N2
+  Coordinator -->|read, R replicas + quorum| N1
+  Coordinator --> N2
+  Gossip[Gossip Protocol<br/>membership + failure detection] --- N1
+  Gossip --- N2
+  Gossip --- N3
+  N1 --> AntiEntropy[Anti-Entropy / Merkle Tree Sync]
+  N2 --> AntiEntropy
+  </pre>
+</section>
+
+</main>
+
+<footer>
+  Diagrams are simplified reference architectures for interview discussion, not production blueprints.
+  <br><a href="#top" class="back-to-top">Back to top</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  function currentTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
+  }
+  mermaid.initialize({ startOnLoad: true, theme: currentTheme(), securityLevel: 'strict' });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Catalog — Data Structures</title>
+<style>
+  :root{
+    --ink:#20232c;
+    --paper:#efe8d8;
+    --paper-shadow:#d9d0b8;
+    --drawer:#171a22;
+    --drawer-2:#1f2330;
+    --brass:#c98f3a;
+    --brass-soft:#e8b565;
+    --sage:#4c8577;
+    --rust:#a24d3d;
+    --line:#c9bfa2;
+    --ink-soft:#5a5645;
+    display-face: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+    mono-face: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--drawer);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.03), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(255,255,255,0.02), transparent 40%);
+    color:var(--paper);
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+    overscroll-behavior:none;
+    -webkit-user-select:none;
+    user-select:none;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  #app{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    max-width:520px;
+    margin:0 auto;
+    width:100%;
+    height:100%;
+    padding: max(14px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  /* ---------- Header / drawer label ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(232,181,101,0.25);
+    margin-bottom:12px;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:8px;
+  }
+  .brand .tab{
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    color:var(--brass-soft);
+    border:1px solid rgba(232,181,101,0.4);
+    padding:2px 6px;
+    border-radius:3px;
+    text-transform:uppercase;
+  }
+  .brand h1{
+    font-size:19px;
+    margin:0;
+    font-weight:600;
+    letter-spacing:0.01em;
+    color:#f3ecd8;
+  }
+  .stat-pill{
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size:11px;
+    color:var(--drawer);
+    background:var(--brass-soft);
+    padding:5px 9px;
+    border-radius:20px;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+
+  /* ---------- Views ---------- */
+  .view{ flex:1; min-height:0; display:none; flex-direction:column; }
+  .view.active{ display:flex; }
+
+  /* ---- Home / drawer index ---- */
+  #view-home{ overflow-y:auto; padding-bottom:8px; }
+  .home-lead{
+    font-size:13px;
+    color:#b9b199;
+    line-height:1.5;
+    margin: 2px 0 16px;
+  }
+  .due-banner{
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(135deg, var(--brass) 0%, #a9711f 100%);
+    color:#1b1305;
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    cursor:pointer;
+    border:none;
+    width:100%;
+    font-family:inherit;
+    text-align:left;
+  }
+  .due-banner .num{ font-size:26px; font-weight:700; font-family: ui-monospace, monospace; line-height:1; }
+  .due-banner .lbl{ font-size:12px; font-weight:600; letter-spacing:0.03em; margin-top:2px; opacity:0.85;}
+  .due-banner .go{ font-size:13px; font-weight:700; }
+  .due-banner:disabled{ opacity:0.4; cursor:default; }
+
+  .cat-list{ display:flex; flex-direction:column; gap:1px; }
+  .cat-row{
+    display:flex; align-items:center; gap:12px;
+    background:var(--drawer-2);
+    padding:12px 12px;
+    cursor:pointer;
+    border:none;
+    color:inherit;
+    font-family:inherit;
+    text-align:left;
+    width:100%;
+    border-left:3px solid transparent;
+  }
+  .cat-row:first-child{ border-top-left-radius:8px; border-top-right-radius:8px; }
+  .cat-row:last-child{ border-bottom-left-radius:8px; border-bottom-right-radius:8px; }
+  .cat-row .idx{
+    font-family: ui-monospace, monospace;
+    font-size:10px;
+    color:var(--ink-soft);
+    background:rgba(239,232,216,0.06);
+    width:22px; height:22px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:4px;
+    flex-shrink:0;
+    color:#8f8a76;
+  }
+  .cat-row .name{ flex:1; font-size:14.5px; color:#e9e2cd; }
+  .cat-row .count{ font-family: ui-monospace, monospace; font-size:11px; color:#8f8a76; }
+  .cat-row .mastery{ width:34px; height:4px; border-radius:2px; background:rgba(255,255,255,0.08); overflow:hidden; flex-shrink:0;}
+  .cat-row .mastery i{ display:block; height:100%; background:var(--sage); }
+  .cat-row.has-due{ border-left-color:var(--brass-soft); }
+
+  /* ---- Study view ---- */
+  #view-study{ }
+  .study-top{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .back-btn{
+    background:none; border:none; color:#c9bfa2; font-family: ui-monospace, monospace;
+    font-size:12px; cursor:pointer; padding:6px 0; letter-spacing:0.02em;
+  }
+  .progress-track{
+    flex:1; height:3px; background:rgba(255,255,255,0.08); margin:0 12px; border-radius:2px; overflow:hidden;
+  }
+  .progress-track i{ display:block; height:100%; background:var(--brass-soft); width:0%; transition:width .25s; }
+  .progress-count{ font-family: ui-monospace, monospace; font-size:11px; color:#8f8a76; }
+
+  .card-stage{
+    flex:1; position:relative; perspective:1400px; min-height:0;
+    display:flex; align-items:stretch; justify-content:center;
+    padding: 6px 0 4px;
+  }
+  .card{
+    position:relative; width:100%; transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);
+    cursor:pointer;
+  }
+  .card.flipped{ transform:rotateY(180deg); }
+  .face{
+    position:absolute; inset:0;
+    backface-visibility:hidden;
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:10px;
+    box-shadow:0 10px 0 -3px var(--paper-shadow), 0 18px 30px rgba(0,0,0,0.45);
+    padding:20px 20px 16px;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .face::before{
+    content:"";
+    position:absolute; top:14px; right:14px;
+    width:14px; height:14px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #fff, var(--drawer) 70%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+    opacity:0.5;
+  }
+  .face.back{ transform:rotateY(180deg); overflow-y:auto; -webkit-user-select:text; user-select:text;}
+  .face-eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-family: ui-monospace, monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:10px;
+  }
+  .diff-tag{ padding:2px 7px; border-radius:3px; font-weight:700; }
+  .diff-Easy{ background:#dcebd4; color:#3d6b2f; }
+  .diff-Medium{ background:#f3e2c2; color:#8a5a12; }
+  .diff-Hard{ background:#f0d3ce; color:#8f3322; }
+  .diff-Concept{ background:#dcd4ea; color:#4a3a7a; }
+
+  .prob-name{ font-size:21px; font-weight:700; line-height:1.25; margin:0 0 8px; }
+  .prob-prompt{ font-size:14px; line-height:1.55; color:#3a3627; flex:1; }
+  .flip-hint{
+    text-align:center; font-family: ui-monospace, monospace; font-size:10.5px;
+    color:var(--ink-soft); letter-spacing:0.06em; text-transform:uppercase;
+    padding-top:8px; border-top:1px dashed var(--line); margin-top:10px;
+  }
+
+  .back h3{ font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin:12px 0 6px; }
+  .back h3:first-of-type{ margin-top:0; }
+  .insight{ font-size:14px; line-height:1.5; color:#2e2b1f; background:#e4dcc4; border-left:3px solid var(--brass); padding:8px 10px; border-radius:0 6px 6px 0; }
+  .complexity{ font-family: ui-monospace, monospace; font-size:12.5px; color:#3a3627; display:flex; gap:16px; }
+  pre.code{
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size:12.2px; line-height:1.55; background:#1c1f27; color:#dbe4e0;
+    padding:12px 12px; border-radius:8px; overflow-x:auto; white-space:pre;
+    -webkit-user-select:text; user-select:text;
+  }
+  pre.code .kw{ color:#e8b565; }
+  a.leet-link{ color:var(--rust); font-size:12px; font-family: ui-monospace, monospace; text-decoration:none; border-bottom:1px dotted var(--rust); }
+
+  .rate-row{ display:flex; gap:8px; margin-top:14px; }
+  .rate-btn{
+    flex:1; padding:12px 4px; border-radius:9px; border:none; font-family: ui-monospace, monospace;
+    font-size:11px; font-weight:700; letter-spacing:0.02em; cursor:pointer; color:#fff;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .rate-btn span.sub{ font-weight:400; opacity:0.75; font-size:9.5px; }
+  .rate-again{ background:#8f3322; }
+  .rate-hard{ background:#8a5a12; }
+  .rate-good{ background:#3d6b2f; }
+  .rate-easy{ background:#2f6e63; }
+
+  .empty-state{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#8f8a76; gap:8px; }
+  .empty-state .big{ font-size:15px; color:#e9e2cd; }
+
+  /* ---------- Root: mode select ---------- */
+  #view-root{ justify-content:center; gap:14px; }
+  .mode-lead{ font-size:13px; color:#b9b199; line-height:1.5; margin: 2px 0 6px; text-align:center; }
+  .mode-card{
+    display:flex; flex-direction:column; gap:6px;
+    background:var(--drawer-2);
+    border:1px solid rgba(232,181,101,0.18);
+    border-radius:14px;
+    padding:22px 20px;
+    cursor:pointer;
+    text-align:left;
+    color:inherit;
+    font-family:inherit;
+    width:100%;
+    position:relative;
+    overflow:hidden;
+  }
+  .mode-card .glyph{ font-size:26px; margin-bottom:2px; }
+  .mode-card h2{ margin:0; font-size:18px; color:#f3ecd8; font-weight:700; }
+  .mode-card p{ margin:0; font-size:12.5px; color:#8f8a76; line-height:1.5; font-family: ui-monospace, monospace; }
+  .mode-card.list::before{
+    content:""; position:absolute; top:0; right:0; width:70px; height:70px;
+    background:linear-gradient(135deg, rgba(232,181,101,0.14), transparent 70%);
+  }
+  .mode-card.tinder::before{
+    content:""; position:absolute; top:0; right:0; width:70px; height:70px;
+    background:linear-gradient(135deg, rgba(76,133,119,0.22), transparent 70%);
+  }
+  .mode-card .arrow{ position:absolute; right:18px; bottom:18px; font-family: ui-monospace, monospace; font-size:12px; color:var(--brass-soft); }
+
+  /* ---------- Tinder mode ---------- */
+  #view-tinder{ }
+  .tinder-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .tinder-sub{ font-family: ui-monospace, monospace; font-size:11px; color:#8f8a76; }
+  .tinder-stage{
+    flex:1; position:relative; min-height:0;
+    display:flex; align-items:stretch; justify-content:center;
+    padding: 4px 0 6px;
+    touch-action:none;
+  }
+  .tswipe-wrap{
+    position:absolute; inset:0;
+    will-change:transform;
+  }
+  .tswipe-wrap.behind{ transform:scale(0.94) translateY(10px); opacity:0.6; z-index:1; }
+  .tswipe-wrap.top{ z-index:2; }
+  .tswipe-wrap.dragging{ transition:none; }
+  .tswipe-wrap.snap-back{ transition:transform .35s cubic-bezier(.2,.8,.2,1); }
+  .tswipe-wrap.fly-out{ transition:transform .4s ease-out, opacity .4s ease-out; }
+
+  .tcard{
+    position:relative; width:100%; height:100%; perspective:1400px; transform-style:preserve-3d; cursor:pointer;
+  }
+  .tcard-inner{
+    position:relative; width:100%; height:100%; transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);
+  }
+  .tcard-inner.flipped{ transform:rotateY(180deg); }
+
+  .stamp{
+    position:absolute; top:26px; font-family: ui-monospace, monospace; font-weight:800; font-size:22px;
+    padding:6px 14px; border:3px solid; border-radius:8px; letter-spacing:0.08em;
+    opacity:0; pointer-events:none; z-index:5; transform:rotate(-18deg);
+  }
+  .stamp.hard{ left:20px; color:#c0493a; border-color:#c0493a; }
+  .stamp.easy{ right:20px; color:#3d8b72; border-color:#3d8b72; transform:rotate(18deg); }
+
+  .tinder-hint{
+    text-align:center; font-family: ui-monospace, monospace; font-size:10.5px;
+    color:#8f8a76; letter-spacing:0.05em; text-transform:uppercase; padding:10px 0 2px;
+  }
+  .tinder-rate-row{ display:flex; gap:10px; margin-top:6px; }
+  .tinder-rate-btn{
+    flex:1; padding:13px 4px; border-radius:10px; border:none; font-family: ui-monospace, monospace;
+    font-size:12px; font-weight:700; letter-spacing:0.02em; cursor:pointer; color:#fff;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .tinder-rate-btn span.sub{ font-weight:400; opacity:0.8; font-size:9.5px; }
+  .tinder-rate-hard{ background:#8a3a2c; }
+  .tinder-rate-easy{ background:#2f6e63; }
+
+  ::-webkit-scrollbar{ width:0; height:0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <span class="tab">CATALOG</span>
+      <h1 id="brandTitle">Data Structures</h1>
+    </div>
+    <div class="stat-pill" id="streakPill">0🔥</div>
+  </header>
+
+  <div id="view-root" class="view active">
+    <p class="mode-lead">Two ways to study. Pick one.</p>
+    <button class="mode-card list" id="modeListBtn">
+      <div class="glyph">🗂️</div>
+      <h2>List Mode</h2>
+      <p>Browse the catalog by pattern, drill one drawer at a time, track mastery per category.</p>
+      <div class="arrow">OPEN →</div>
+    </button>
+    <button class="mode-card tinder" id="modeTinderBtn">
+      <div class="glyph">🔥</div>
+      <h2>Tinder Mode</h2>
+      <p>Random cards, one at a time. Tap to reveal, swipe left = hard, swipe right = easy.</p>
+      <div class="arrow">OPEN →</div>
+    </button>
+  </div>
+
+  <div id="view-home" class="view">
+    <div class="study-top" style="margin-bottom:8px;">
+      <button class="back-btn" id="homeBackBtn">← MODES</button>
+    </div>
+    <p class="home-lead">24 core data structure &amp; algorithm concepts — arrays through DP strategy. Pull a drawer, review what's due, rate your recall — the schedule does the rest.</p>
+    <button class="due-banner" id="dueBanner">
+      <div>
+        <div class="num" id="dueNum">0</div>
+        <div class="lbl">CARDS DUE TODAY</div>
+      </div>
+      <div class="go">REVIEW →</div>
+    </button>
+    <div class="cat-list" id="catList"></div>
+  </div>
+
+  <div id="view-study" class="view">
+    <div class="study-top">
+      <button class="back-btn" id="backBtn">← DRAWERS</button>
+      <div class="progress-track"><i id="progressFill"></i></div>
+      <div class="progress-count" id="progressCount">0/0</div>
+    </div>
+    <div class="card-stage">
+      <div class="card" id="card">
+        <div class="face front" id="faceFront"></div>
+        <div class="face back" id="faceBack"></div>
+      </div>
+    </div>
+    <div class="rate-row" id="rateRow" style="visibility:hidden;">
+      <button class="rate-btn rate-again" data-rate="0">AGAIN<span class="sub">&lt;10m</span></button>
+      <button class="rate-btn rate-hard" data-rate="1">HARD<span class="sub">1d</span></button>
+      <button class="rate-btn rate-good" data-rate="2">GOOD<span class="sub">3d</span></button>
+      <button class="rate-btn rate-easy" data-rate="3">EASY<span class="sub">7d+</span></button>
+    </div>
+  </div>
+
+  <div id="view-tinder" class="view">
+    <div class="tinder-top">
+      <button class="back-btn" id="tinderBackBtn">← MODES</button>
+      <div class="tinder-sub" id="tinderSub">0 in this round</div>
+    </div>
+    <div class="tinder-stage" id="tinderStage"></div>
+    <div class="tinder-hint" id="tinderHint">tap to reveal · swipe when ready</div>
+    <div class="tinder-rate-row">
+      <button class="tinder-rate-btn tinder-rate-hard" id="tinderHardBtn">← HARD<span class="sub">revisit in a couple days</span></button>
+      <button class="tinder-rate-btn tinder-rate-easy" id="tinderEasyBtn">EASY →<span class="sub">revisit much later</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   DATA — NeetCode 150
+   ========================================================= */
+const NC150 = [{"id":"concept-array","name":"Array","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Array_(data_structure)","prompt":"What is an array, and what are the time complexities of its core operations? For example, given arr = [4, 8, 15, 16], what's the cost of reading arr[2], appending 23 at the end, and inserting 0 at the front?","insight":"A contiguous block of memory holding elements of the same type, addressed by index. Contiguity is what makes random access O(1) — the address of index i is just base + i*elementSize. Insertion or deletion in the middle requires shifting every element after it.","time":"access O(1), search O(n), insert/delete end O(1) amortized, insert/delete middle O(n)","space":"O(n)","code":"# Python's list is a dynamic array under the hood\narr = [1, 2, 3]\narr.append(4)       # O(1) amortized\narr.insert(0, 0)     # O(n) - shifts everything right\nval = arr[2]         # O(1) - direct index math\narr.pop()            # O(1) amortized from the end"},{"id":"concept-dynamic-array","name":"Dynamic Array (Resizing)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Dynamic_array","prompt":"How does a dynamic array (like Python's list or Java's ArrayList) grow past its fixed underlying capacity? For example, if a dynamic array starts at capacity 4 and is already full, what happens internally when you append a 5th element?","insight":"When the backing array fills up, it allocates a new array roughly double the size, copies everything over, and continues. That copy is O(n), but because it happens rarely (geometric growth), the average cost per append works out to O(1) - this is amortized analysis.","time":"append O(1) amortized, worst case single append O(n)","space":"O(n)","code":"class DynamicArray:\n    def __init__(self):\n        self.capacity = 1\n        self.size = 0\n        self.data = [None] * self.capacity\n    def append(self, val):\n        if self.size == self.capacity:\n            self.capacity *= 2\n            new_data = [None] * self.capacity\n            for i in range(self.size):\n                new_data[i] = self.data[i]\n            self.data = new_data\n        self.data[self.size] = val\n        self.size += 1"},{"id":"concept-singly-linked-list","name":"Singly Linked List","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Linked_list","prompt":"What is a singly linked list, and how does it trade off against an array? For example, given the list 1 -> 2 -> 3, how would you insert a new node with value 0 at the head, and why is that cheaper than doing the same on an array?","insight":"A chain of nodes, each holding a value and a pointer to the next node. No contiguous memory requirement, so insertion/deletion at a known position is O(1) (just relink pointers) - but there's no random access, so reaching position i means walking i nodes from the head.","time":"access/search O(n), insert/delete at head O(1), insert/delete at known node O(1)","space":"O(n)","code":"class ListNode:\n    def __init__(self, val, next=None):\n        self.val = val\n        self.next = next\n\n# build 1 -> 2 -> 3\nhead = ListNode(1, ListNode(2, ListNode(3)))\n\n# insert 0 at head - O(1), no shifting\nhead = ListNode(0, head)"},{"id":"concept-doubly-linked-list","name":"Doubly Linked List","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Doubly_linked_list","prompt":"How does a doubly linked list differ from a singly linked list, and why is it useful? For example, in an LRU cache holding nodes A <-> B <-> C, how do you remove B in O(1) given only a reference to that node?","insight":"Each node also holds a pointer back to the previous node. This lets you traverse backward and delete a node in O(1) given only a reference to it (no need to walk from the head to find its predecessor) - this is exactly what makes LRU Cache's O(1) eviction possible.","time":"access/search O(n), insert/delete at known node O(1)","space":"O(n)","code":"class DNode:\n    def __init__(self, val):\n        self.val = val\n        self.prev = None\n        self.next = None\n\n# delete a known node in O(1)\ndef remove(node):\n    node.prev.next = node.next\n    node.next.prev = node.prev"},{"id":"concept-stack","name":"Stack (LIFO)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Stack_(abstract_data_type)","prompt":"What is a stack, and what problem shapes naturally fit it? For example, how would a stack determine that \"([{}])\" is balanced but \"([)]\" is not?","insight":"Last-In-First-Out: you only ever add or remove from one end (the 'top'). Reach for a stack whenever a problem involves matching or undoing the most recent thing first - parentheses matching, undo history, DFS traversal, or 'find the nearest previous/next element satisfying X' (monotonic stack).","time":"push/pop/peek O(1)","space":"O(n)","code":"stack = []\nstack.append(1)   # push\nstack.append(2)\ntop = stack[-1]     # peek -> 2\nstack.pop()         # pop -> 2, stack is now [1]"},{"id":"concept-queue","name":"Queue (FIFO)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Queue_(abstract_data_type)","prompt":"What is a queue, and why is it the backbone of BFS? For example, starting BFS from node A in a graph, why must all of A's direct neighbors be processed before any of their neighbors?","insight":"First-In-First-Out: elements are added at the back and removed from the front. BFS explores nodes in the order they were discovered, level by level - a queue enforces exactly that ordering. In Python, use collections.deque, never a plain list, since list.pop(0) is O(n).","time":"enqueue/dequeue O(1) with deque","space":"O(n)","code":"from collections import deque\nq = deque()\nq.append(1)        # enqueue\nq.append(2)\nfirst = q.popleft()  # dequeue -> 1, O(1)"},{"id":"concept-deque","name":"Deque (Double-Ended Queue)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Double-ended_queue","prompt":"What is a deque, and when would you reach for it over a plain queue or stack? For example, in Sliding Window Maximum over [1,3,-1,-3,5,3,6,7] with k=3, how does a deque track the current max as the window slides?","insight":"Supports O(1) push/pop from both ends. Use it whenever a problem needs a sliding window's boundary maintained at both sides efficiently - e.g. Sliding Window Maximum keeps a monotonic deque of candidate maximums, trimming from the front and back as the window slides.","time":"append/appendleft/pop/popleft O(1)","space":"O(n)","code":"from collections import deque\nd = deque([1, 2, 3])\nd.appendleft(0)   # [0, 1, 2, 3]\nd.append(4)        # [0, 1, 2, 3, 4]\nd.popleft()         # remove 0\nd.pop()              # remove 4"},{"id":"concept-hash-table","name":"Hash Table / Hash Map","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Hash_table","prompt":"How does a hash map achieve near O(1) lookup, and when does it degrade? For example, given {\"a\":1, \"b\":2}, why is checking whether \"a\" is a key close to O(1) regardless of how many entries the map holds?","insight":"A hash function converts a key into an array index (a bucket). Collisions, where two keys hash to the same bucket, are handled by chaining a small list per bucket or open addressing. Average case is O(1), but a poor hash function or adversarial input can push many keys into one bucket, degrading to O(n).","time":"get/put/delete O(1) average, O(n) worst case","space":"O(n)","code":"d = {}\nd['a'] = 1          # O(1) average\nval = d.get('a')     # O(1) average, returns 1\n'a' in d              # O(1) average membership check\ndel d['a']            # O(1) average"},{"id":"concept-hash-set","name":"Hash Set","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Set_(abstract_data_type)","prompt":"How does a set differ from a hash map, and what's it best used for? For example, given nums = [1,2,3,2,4,1], how would a hash set find every duplicate value in a single pass?","insight":"A hash set is a hash map that only stores keys, no values - it just answers 'have I seen this before' in O(1). It's the standard tool for deduplication and for turning an O(n) linear scan for membership into O(1).","time":"add/remove/contains O(1) average","space":"O(n)","code":"seen = set()\nseen.add(5)\n5 in seen            # O(1) average -> True\nseen.discard(5)       # O(1) average removal"},{"id":"concept-binary-tree","name":"Binary Tree","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Binary_tree","prompt":"What is a binary tree, and what are the three standard depth-first traversal orders? For example, for a tree with root 2, left child 1, and right child 3, what order does each of preorder, inorder, and postorder visit the nodes in?","insight":"Each node has at most two children (left, right). Preorder visits node-left-right (good for copying a tree). Inorder visits left-node-right (gives sorted order for a BST). Postorder visits left-right-node (good for deleting a tree, since children are processed before the parent).","time":"traversal O(n)","space":"O(h) recursion, h = height","code":"class TreeNode:\n    def __init__(self, val, left=None, right=None):\n        self.val, self.left, self.right = val, left, right\n\ndef inorder(node):\n    if not node:\n        return []\n    return inorder(node.left) + [node.val] + inorder(node.right)"},{"id":"concept-bst","name":"Binary Search Tree (BST)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Binary_search_tree","prompt":"What invariant defines a BST, and why does that make search fast? For example, searching for 7 in a BST rooted at 5 whose right subtree contains 6, 7, 8, why can you skip the entire left subtree immediately?","insight":"For every node, everything in its left subtree is smaller and everything in its right subtree is larger. That invariant lets you eliminate half the remaining tree at each step, same idea as binary search on a sorted array - but only if the tree stays roughly balanced (an unbalanced BST degrades to a linked list, O(n)).","time":"search/insert/delete O(log n) balanced, O(n) worst case","space":"O(n)","code":"def search(node, target):\n    if not node or node.val == target:\n        return node\n    if target < node.val:\n        return search(node.left, target)\n    return search(node.right, target)"},{"id":"concept-heap","name":"Heap (Priority Queue)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Heap_(data_structure)","prompt":"What guarantee does a heap provide, and why is it the go-to for 'top k' or 'smallest/largest so far' problems? For example, given a min-heap holding [5,1,3], what does the next heappop() return, and how does the heap stay ordered afterward?","insight":"A binary heap keeps the min (or max) always at the root, stored implicitly in an array with no pointers needed - a node at index i has children at 2i+1 and 2i+2. Whenever a problem needs repeated access to the current min/max while the data set keeps changing, a heap beats resorting every time.","time":"push/pop O(log n), peek min/max O(1)","space":"O(n)","code":"import heapq\nheap = []\nheapq.heappush(heap, 5)\nheapq.heappush(heap, 1)\nheapq.heappush(heap, 3)\nheapq.heappop(heap)   # -> 1, the smallest\n# for a max-heap, push negated values"},{"id":"concept-trie","name":"Trie (Prefix Tree)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Trie","prompt":"What is a trie, and why is it faster than a hash set for prefix-based lookups? For example, after inserting \"cat\" and \"car\" into a trie, how would you check whether any stored word starts with \"ca\"?","insight":"A tree where each path from the root spells out a string, one character per edge, and shared prefixes share the same path. A hash set can only answer 'is this exact string present', but a trie can answer 'does anything start with this prefix' in O(prefix length), independent of how many words are stored.","time":"insert/search O(word length)","space":"O(total characters across all words)","code":"class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.end = False\n\nroot = TrieNode()\ndef insert(word):\n    node = root\n    for c in word:\n        node = node.children.setdefault(c, TrieNode())\n    node.end = True"},{"id":"concept-graph-representations","name":"Graph: Adjacency List vs Matrix","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Graph_(abstract_data_type)","prompt":"What's the difference between representing a graph as an adjacency list versus an adjacency matrix, and when does each win? For example, for a graph with edges (0-1) and (1-2), how would you check whether 0 and 2 are directly connected using each representation?","insight":"An adjacency list (dict of node to list of neighbors) uses O(V+E) space and is efficient for sparse graphs - most real graphs. An adjacency matrix (V x V grid of 0/1) uses O(V^2) space but gives O(1) edge-existence checks, which wins for dense graphs or when you query whether two nodes are connected constantly.","time":"list: O(V+E) build, O(degree) neighbor lookup; matrix: O(V^2) build, O(1) edge check","space":"list O(V+E), matrix O(V^2)","code":"from collections import defaultdict\n# adjacency list\ngraph = defaultdict(list)\ngraph[0].append(1)\ngraph[1].append(0)\n\n# adjacency matrix\nn = 3\nmatrix = [[0]*n for _ in range(n)]\nmatrix[0][1] = matrix[1][0] = 1"},{"id":"concept-union-find","name":"Union-Find (Disjoint Set)","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Disjoint-set_data_structure","prompt":"What problem does Union-Find solve, and how do path compression and union by rank make it nearly O(1)? For example, given edges (0,1) and (1,2), how would union-find determine that 0 and 2 end up in the same connected component?","insight":"It tracks a collection of disjoint sets and answers whether two elements are in the same set, and merges sets efficiently - the standard tool for cycle detection and connected components. Path compression flattens the tree during find() so future lookups are faster; union by rank always attaches the smaller tree under the bigger one, keeping trees shallow.","time":"find/union O(alpha(n)) - practically constant","space":"O(n)","code":"class UnionFind:\n    def __init__(self, n):\n        self.parent = list(range(n))\n    def find(self, x):\n        while self.parent[x] != x:\n            self.parent[x] = self.parent[self.parent[x]]  # path compression\n            x = self.parent[x]\n        return x\n    def union(self, x, y):\n        rx, ry = self.find(x), self.find(y)\n        if rx == ry:\n            return False\n        self.parent[rx] = ry\n        return True"},{"id":"concept-big-o","name":"Big-O Notation","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Big_O_notation","prompt":"What does Big-O actually measure, and what's the common ordering of complexity classes from best to worst? For example, why is checking every pair in an n-element array O(n^2) instead of O(n)?","insight":"Big-O describes how runtime or space scales as input size grows, ignoring constant factors - it's about the shape of growth, not exact speed. Common ordering, best to worst: O(1) < O(log n) < O(n) < O(n log n) < O(n^2) < O(2^n) < O(n!). A useful sanity check in interviews: n up to about 10^7 usually needs O(n log n) or better to run in time.","time":"n/a - this is the measurement tool itself","space":"n/a","code":"# O(1): constant\ndef first(arr): return arr[0]\n\n# O(n): linear\ndef contains(arr, x): return x in arr\n\n# O(n^2): quadratic - nested loop over same input\ndef has_dup_pairs(arr):\n    for i in range(len(arr)):\n        for j in range(i+1, len(arr)):\n            if arr[i] == arr[j]:\n                return True\n    return False"},{"id":"concept-bfs-vs-dfs","name":"BFS vs DFS","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Breadth-first_search","prompt":"When should you reach for BFS over DFS, and vice versa? For example, in Rotting Oranges, why does spreading rot level-by-level with BFS give the correct number of minutes, while DFS would not?","insight":"BFS, queue-based, explores level by level, so it's the natural choice whenever you need the shortest path in an unweighted graph, or need to process things in order of distance, like multi-source spreading in Rotting Oranges. DFS, stack or recursion-based, dives deep before backtracking - better for exploring all paths, detecting cycles, or when you just need to know if a path exists without caring about length.","time":"both O(V + E)","space":"BFS O(V) queue, DFS O(h) recursion depth","code":"# BFS\nfrom collections import deque\ndef bfs(start, graph):\n    visited = {start}\n    q = deque([start])\n    while q:\n        node = q.popleft()\n        for nei in graph[node]:\n            if nei not in visited:\n                visited.add(nei)\n                q.append(nei)\n\n# DFS\ndef dfs(node, graph, visited=set()):\n    visited.add(node)\n    for nei in graph[node]:\n        if nei not in visited:\n            dfs(nei, graph, visited)"},{"id":"concept-two-pointers","name":"Two Pointers Technique","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Two-pointer_technique","prompt":"What signals in a problem suggest the two-pointer technique, and how does it save time over brute force? For example, given sorted nums = [2,7,11,15] and target 9, how do two pointers starting at each end find the matching pair without checking all O(n^2) combinations?","insight":"Look for sorted arrays, palindrome checks, or 'find a pair or triplet satisfying a condition' problems. Instead of checking all O(n^2) pairs, two pointers moving purposefully based on comparing their sum or values to a target prune half the remaining search space at each step, dropping to O(n).","time":"O(n) typical","space":"O(1)","code":"def two_sum_sorted(nums, target):\n    l, r = 0, len(nums) - 1\n    while l < r:\n        s = nums[l] + nums[r]\n        if s == target:\n            return [l, r]\n        elif s < target:\n            l += 1\n        else:\n            r -= 1"},{"id":"concept-sliding-window","name":"Sliding Window Technique","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Sliding_window_protocol","prompt":"What kind of problem calls for a sliding window, and how does it avoid the naive O(n^2) approach? For example, finding the longest substring without repeating characters in \"abcabcbb\", how does the window's right edge expand and left edge contract as it scans?","insight":"Whenever you need the best, longest, or shortest contiguous subarray or substring satisfying some condition, a sliding window expands a right edge and contracts a left edge based on that condition, so each element is added and removed from the window at most once - turning an O(n^2) check-every-substring brute force into O(n).","time":"O(n)","space":"O(1) to O(k) depending on what the window tracks","code":"def max_sum_subarray_k(nums, k):\n    window_sum = sum(nums[:k])\n    best = window_sum\n    for i in range(k, len(nums)):\n        window_sum += nums[i] - nums[i - k]\n        best = max(best, window_sum)\n    return best"},{"id":"concept-binary-search-technique","name":"Binary Search Technique","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Binary_search_algorithm","prompt":"Binary search isn't just for sorted arrays - what's the general condition that makes it applicable? For example, in Koko Eating Bananas, why can you binary search over possible eating speeds even though speeds aren't a literal sorted array of input data?","insight":"Binary search works on any monotonic decision space: if you can define a yes/no condition on a value where all the no's come before all the yes's, or vice versa, once sorted, you can binary search for the boundary - this is why it works for search-on-the-answer problems like Koko Eating Bananas, not just literal sorted arrays.","time":"O(log n)","space":"O(1)","code":"def binary_search_boundary(lo, hi, condition):\n    # finds smallest value where condition(value) is True\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if condition(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo"},{"id":"concept-recursion-backtracking","name":"Recursion & Backtracking","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Backtracking","prompt":"What's the difference between plain recursion and backtracking? For example, generating all subsets of [1,2,3], how does backtracking add 1, recurse into the rest, then remove 1 before trying the branch without it?","insight":"Backtracking is recursion with explicit undo: you make a choice, recurse deeper, and when you return, you undo that choice before trying the next one - this is how you explore every branch of a decision tree, like subsets, permutations, or N-Queens, while reusing the same mutable state instead of copying it at every level.","time":"problem-dependent, often exponential","space":"O(depth) recursion","code":"def backtrack(path, choices):\n    if is_solution(path):\n        record(path)\n        return\n    for choice in choices:\n        path.append(choice)      # make choice\n        backtrack(path, next_choices(choices, choice))\n        path.pop()                # undo choice"},{"id":"concept-dp-memo-vs-tabulation","name":"Dynamic Programming: Memoization vs Tabulation","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Dynamic_programming","prompt":"What are the two main ways to implement dynamic programming, and how do they differ? For example, computing fib(10), how does the memoized version's recursive call tree differ from the tabulated version's bottom-up loop?","insight":"DP applies when a problem has overlapping subproblems and optimal substructure. Memoization is top-down: write the natural recursion, cache results as you go. Tabulation is bottom-up: build an array iteratively from the base case upward. Tabulation usually avoids recursion-depth limits and can be optimized to O(1) space when only recent rows matter.","time":"varies by problem, both convert exponential to polynomial","space":"memo O(n) cache plus recursion stack, tabulation O(n) array, often reducible","code":"from functools import lru_cache\n\n# memoization (top-down)\n@lru_cache(maxsize=None)\ndef fib_memo(n):\n    if n <= 1: return n\n    return fib_memo(n-1) + fib_memo(n-2)\n\n# tabulation (bottom-up)\ndef fib_tab(n):\n    dp = [0, 1]\n    for i in range(2, n + 1):\n        dp.append(dp[-1] + dp[-2])\n    return dp[n]"},{"id":"concept-greedy","name":"Greedy Algorithms","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Greedy_algorithm","prompt":"When is a greedy approach actually correct, versus when does it just look tempting? For example, given intervals [[1,3],[2,4],[3,6]], why does always picking the interval that ends earliest next produce the maximum number of non-overlapping intervals?","insight":"Greedy makes the locally best choice at each step and never looks back - it's correct only when the problem has the greedy choice property, where a locally optimal choice leads to a globally optimal solution, which usually requires proof or strong intuition, not just gut feeling. When in doubt, try to find a counterexample before trusting a greedy approach; if one is easy to construct, you need DP instead.","time":"often O(n log n), dominated by a sort","space":"O(1) typical","code":"# classic greedy: activity selection (max non-overlapping intervals)\ndef max_non_overlapping(intervals):\n    intervals.sort(key=lambda x: x[1])  # sort by end time\n    count = 0\n    last_end = float('-inf')\n    for start, end in intervals:\n        if start >= last_end:\n            count += 1\n            last_end = end\n    return count"},{"id":"concept-sorting-overview","name":"Sorting Algorithms Overview","difficulty":"Concept","pattern":"Data Structures & Concepts","url":"https://en.wikipedia.org/wiki/Sorting_algorithm","prompt":"What are the complexity trade-offs between the common sorting algorithms you should know for interviews? For example, why would you choose merge sort over quicksort when sorting a huge dataset where a guaranteed worst case matters more than average speed?","insight":"Merge sort and heap sort guarantee O(n log n) worst-case, but merge sort needs O(n) extra space. Quicksort is O(n log n) average but O(n^2) worst case, though rare with good pivot choice, and sorts in place. Bucket, counting, and radix sort can beat O(n log n) entirely, but only work for restricted input types like bounded integers. Python's built-in sort, Timsort, is O(n log n) worst case and exploits existing order in real data.","time":"comparison sorts: O(n log n) best possible; counting/radix: O(n+k)","space":"merge sort O(n), quicksort O(log n), heap sort O(1)","code":"# merge sort - stable, guaranteed O(n log n), O(n) space\ndef merge_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    left, right = merge_sort(arr[:mid]), merge_sort(arr[mid:])\n    result, i, j = [], 0, 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:\n            result.append(left[i]); i += 1\n        else:\n            result.append(right[j]); j += 1\n    return result + left[i:] + right[j:]"}];
+
+/* =========================================================
+   SCHEDULING — simplified Leitner / interval system
+   box 0: again (due <10 min later, effectively "still in session")
+   box 1: 1 day
+   box 2: 3 days
+   box 3: 7 days
+   box 4: 14 days
+   box 5: 30 days
+   box 6: 60 days (mastered ceiling)
+   ========================================================= */
+const BOX_DAYS = [0, 1, 3, 7, 14, 30, 60];
+
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function highlightCode(code){
+  const kws = ["def","return","if","elif","else","for","while","in","not","and","or","class","self","import","from","True","False","None","break","continue","lambda","yield","try","except","raise","is","global","del","with","as"];
+  let esc = escapeHtml(code);
+  const re = new RegExp("\\b(" + kws.join("|") + ")\\b", "g");
+  return esc.replace(re, '<span class="kw">$1</span>');
+}
+
+let STATE = {}; // id -> {box, due (ISO), reps}
+let ORDER = [];
+let position = 0;
+let currentCat = null;
+
+async function loadState(){
+  try{
+    const r = localStorage.getItem('ds-concepts-state');
+    STATE = r ? JSON.parse(r) : {};
+  }catch(e){ STATE = {}; }
+  try{
+    const s = localStorage.getItem('ds-concepts-streak');
+    STREAK = s ? JSON.parse(s) : {count:0, last:null};
+  }catch(e){ STREAK = {count:0, last:null}; }
+}
+async function saveState(){
+  try{ localStorage.setItem('ds-concepts-state', JSON.stringify(STATE)); }catch(e){}
+}
+async function saveStreak(){
+  try{ localStorage.setItem('ds-concepts-streak', JSON.stringify(STREAK)); }catch(e){}
+}
+
+let STREAK = {count:0, last:null};
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function cardState(id){
+  if(!STATE[id]) STATE[id] = {box:0, due:new Date(0).toISOString(), reps:0};
+  return STATE[id];
+}
+function isDue(id){
+  const st = cardState(id);
+  return new Date(st.due).getTime() <= Date.now();
+}
+function rate(id, grade){
+  const st = cardState(id);
+  st.reps += 1;
+  if(grade === 0){ st.box = 0; }
+  else if(grade === 1){ st.box = Math.max(1, st.box); }
+  else if(grade === 2){ st.box = Math.min(BOX_DAYS.length - 1, st.box + 1); }
+  else { st.box = Math.min(BOX_DAYS.length - 1, st.box + 2); }
+  const days = BOX_DAYS[st.box];
+  const due = new Date();
+  if(days === 0){ due.setMinutes(due.getMinutes() + 8); }
+  else { due.setDate(due.getDate() + days); }
+  st.due = due.toISOString();
+  saveState();
+
+  const t = todayStr();
+  if(STREAK.last !== t){
+    STREAK.count = (STREAK.last === yesterdayStr()) ? STREAK.count + 1 : 1;
+    STREAK.last = t;
+    saveStreak();
+  }
+}
+function yesterdayStr(){ const d = new Date(); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10); }
+
+/* =========================================================
+   CATEGORIES
+   ========================================================= */
+function categories(){
+  const map = new Map();
+  NC150.forEach(p => {
+    if(!map.has(p.pattern)) map.set(p.pattern, []);
+    map.get(p.pattern).push(p);
+  });
+  return map;
+}
+
+function renderHome(){
+  document.getElementById('streakPill').textContent = (STREAK.count||0) + '🔥';
+  const due = NC150.filter(p => isDue(p.id));
+  document.getElementById('dueNum').textContent = due.length;
+  const banner = document.getElementById('dueBanner');
+  banner.disabled = due.length === 0;
+
+  const cats = categories();
+  const list = document.getElementById('catList');
+  list.innerHTML = '';
+  let i = 0;
+  for(const [name, probs] of cats){
+    i++;
+    const dueCount = probs.filter(p => isDue(p.id)).length;
+    const masteredCount = probs.filter(p => cardState(p.id).box >= 4).length;
+    const row = document.createElement('button');
+    row.className = 'cat-row' + (dueCount>0 ? ' has-due' : '');
+    row.innerHTML = `
+      <span class="idx">${String(i).padStart(2,'0')}</span>
+      <span class="name">${name}</span>
+      <span class="mastery"><i style="width:${Math.round(100*masteredCount/probs.length)}%"></i></span>
+      <span class="count">${dueCount>0 ? dueCount+' due' : probs.length}</span>
+    `;
+    row.onclick = () => startSession(name, probs);
+    list.appendChild(row);
+  }
+}
+
+/* =========================================================
+   STUDY SESSION
+   ========================================================= */
+function startSession(catName, pool){
+  currentCat = catName;
+  const due = pool.filter(p => isDue(p.id));
+  ORDER = (due.length ? due : pool.slice()).sort(() => Math.random()-0.5);
+  position = 0;
+  showView('study');
+  renderCard();
+}
+function startDueAll(){
+  const due = NC150.filter(p => isDue(p.id));
+  if(!due.length) return;
+  currentCat = 'Due Today';
+  ORDER = due.sort(() => Math.random()-0.5);
+  position = 0;
+  showView('study');
+  renderCard();
+}
+
+function showView(name){
+  document.getElementById('view-root').classList.toggle('active', name==='root');
+  document.getElementById('view-home').classList.toggle('active', name==='home');
+  document.getElementById('view-study').classList.toggle('active', name==='study');
+  document.getElementById('view-tinder').classList.toggle('active', name==='tinder');
+  if(name === 'root') document.getElementById('streakPill').textContent = (STREAK.count||0) + '🔥';
+  if(name === 'home') renderHome();
+  if(name === 'tinder') startTinder();
+}
+
+function renderCard(){
+  const cardEl = document.getElementById('card');
+  const rateRow = document.getElementById('rateRow');
+  cardEl.classList.remove('flipped');
+  rateRow.style.visibility = 'hidden';
+
+  if(position >= ORDER.length){
+    document.getElementById('faceFront').innerHTML = `<div class="empty-state"><div class="big">Drawer closed.</div><div>You cleared every card in ${currentCat}.</div></div>`;
+    document.getElementById('faceBack').innerHTML = '';
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressCount').textContent = `${ORDER.length}/${ORDER.length}`;
+    return;
+  }
+  const p = ORDER[position];
+  document.getElementById('progressFill').style.width = Math.round(100*position/ORDER.length) + '%';
+  document.getElementById('progressCount').textContent = `${position+1}/${ORDER.length}`;
+
+  document.getElementById('faceFront').innerHTML = `
+    <div class="face-eyebrow"><span class="diff-tag diff-${p.difficulty}">${p.difficulty}</span><span>${p.pattern}</span></div>
+    <div class="prob-name">${p.name}</div>
+    <div class="prob-prompt">${p.prompt}</div>
+    <div class="flip-hint">tap card to flip</div>
+  `;
+  document.getElementById('faceBack').innerHTML = `
+    <div class="face-eyebrow"><span class="diff-tag diff-${p.difficulty}">${p.difficulty}</span><a class="leet-link" href="${p.url}" target="_blank" rel="noopener">leetcode ↗</a></div>
+    <div class="prob-name" style="font-size:16px;">${p.name}</div>
+    <h3>Key insight</h3>
+    <div class="insight">${p.insight}</div>
+    <h3>Complexity</h3>
+    <div class="complexity"><span>time ${p.time}</span><span>space ${p.space}</span></div>
+    <h3>Approach</h3>
+    <pre class="code">${highlightCode(p.code)}</pre>
+  `;
+}
+
+document.getElementById('card').addEventListener('click', () => {
+  const cardEl = document.getElementById('card');
+  if(position >= ORDER.length) return;
+  cardEl.classList.toggle('flipped');
+  document.getElementById('rateRow').style.visibility = cardEl.classList.contains('flipped') ? 'visible' : 'hidden';
+});
+
+document.getElementById('rateRow').addEventListener('click', (e) => {
+  const btn = e.target.closest('.rate-btn');
+  if(!btn) return;
+  const grade = parseInt(btn.dataset.rate, 10);
+  const p = ORDER[position];
+  rate(p.id, grade);
+  position++;
+  renderCard();
+});
+
+document.getElementById('backBtn').addEventListener('click', () => showView('home'));
+document.getElementById('homeBackBtn').addEventListener('click', () => showView('root'));
+document.getElementById('dueBanner').addEventListener('click', startDueAll);
+document.getElementById('modeListBtn').addEventListener('click', () => showView('home'));
+document.getElementById('modeTinderBtn').addEventListener('click', () => showView('tinder'));
+document.getElementById('tinderBackBtn').addEventListener('click', () => showView('root'));
+
+/* =========================================================
+   TINDER MODE
+   ========================================================= */
+let TDECK = [];
+let TPOS = 0;
+
+function buildTinderDeck(){
+  const due = NC150.filter(p => isDue(p.id));
+  const pool = due.length ? due : NC150.slice();
+  TDECK = pool.slice().sort(() => Math.random() - 0.5);
+  TPOS = 0;
+}
+
+function startTinder(){
+  buildTinderDeck();
+  renderTinderSub();
+  paintTinderStage();
+}
+
+function renderTinderSub(){
+  document.getElementById('tinderSub').textContent = `${Math.max(TDECK.length - TPOS, 0)} in this round`;
+}
+
+function tinderFaceHTML(p, isBack){
+  if(!isBack){
+    return `
+      <div class="face-eyebrow"><span class="diff-tag diff-${p.difficulty}">${p.difficulty}</span><span>${p.pattern}</span></div>
+      <div class="prob-name">${p.name}</div>
+      <div class="prob-prompt">${p.prompt}</div>
+      <div class="flip-hint">tap to reveal</div>
+    `;
+  }
+  return `
+    <div class="face-eyebrow"><span class="diff-tag diff-${p.difficulty}">${p.difficulty}</span><a class="leet-link" href="${p.url}" target="_blank" rel="noopener">leetcode ↗</a></div>
+    <div class="prob-name" style="font-size:16px;">${p.name}</div>
+    <h3>Key insight</h3>
+    <div class="insight">${p.insight}</div>
+    <h3>Complexity</h3>
+    <div class="complexity"><span>time ${p.time}</span><span>space ${p.space}</span></div>
+    <h3>Approach</h3>
+    <pre class="code">${highlightCode(p.code)}</pre>
+  `;
+}
+
+function buildTinderCardEl(p, layer){
+  const wrap = document.createElement('div');
+  wrap.className = 'tswipe-wrap ' + layer;
+  wrap.innerHTML = `
+    <div class="tcard">
+      <div class="tcard-inner">
+        <div class="face front">${tinderFaceHTML(p, false)}</div>
+        <div class="face back">${tinderFaceHTML(p, true)}</div>
+      </div>
+      <div class="stamp hard">HARD</div>
+      <div class="stamp easy">EASY</div>
+    </div>
+  `;
+  return wrap;
+}
+
+function paintTinderStage(){
+  const stage = document.getElementById('tinderStage');
+  stage.innerHTML = '';
+  renderTinderSub();
+
+  if(TPOS >= TDECK.length){
+    stage.innerHTML = `<div class="empty-state"><div class="big">Round complete.</div><div>Reshuffling for another pass.</div></div>`;
+    setTimeout(() => { buildTinderDeck(); paintTinderStage(); }, 1200);
+    return;
+  }
+
+  // behind card (peek), for visual depth
+  if(TPOS + 1 < TDECK.length){
+    stage.appendChild(buildTinderCardEl(TDECK[TPOS+1], 'behind'));
+  }
+  const topWrap = buildTinderCardEl(TDECK[TPOS], 'top');
+  stage.appendChild(topWrap);
+  wireTinderDrag(topWrap, TDECK[TPOS]);
+}
+
+function wireTinderDrag(wrap, problem){
+  const tcard = wrap.querySelector('.tcard');
+  const inner = wrap.querySelector('.tcard-inner');
+  const stampHard = wrap.querySelector('.stamp.hard');
+  const stampEasy = wrap.querySelector('.stamp.easy');
+  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false, pointerId = null, moved = false;
+
+  function onDown(e){
+    pointerId = e.pointerId;
+    startX = e.clientX; startY = e.clientY;
+    dx = 0; dy = 0; dragging = true; moved = false;
+    wrap.classList.add('dragging');
+    wrap.classList.remove('snap-back');
+    tcard.setPointerCapture && tcard.setPointerCapture(pointerId);
+  }
+  function onMove(e){
+    if(!dragging) return;
+    dx = e.clientX - startX;
+    dy = e.clientY - startY;
+    if(Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+    const rot = dx / 18;
+    wrap.style.transform = `translate(${dx}px, ${dy*0.4}px) rotate(${rot}deg)`;
+    const progress = Math.min(Math.abs(dx) / 120, 1);
+    if(dx < 0){ stampHard.style.opacity = progress; stampEasy.style.opacity = 0; }
+    else if(dx > 0){ stampEasy.style.opacity = progress; stampHard.style.opacity = 0; }
+    else { stampHard.style.opacity = 0; stampEasy.style.opacity = 0; }
+  }
+  function onUp(e){
+    if(!dragging) return;
+    dragging = false;
+    wrap.classList.remove('dragging');
+    const threshold = 100;
+    if(!moved){
+      inner.classList.toggle('flipped');
+      wrap.style.transform = '';
+      return;
+    }
+    if(dx <= -threshold){
+      commitSwipe(wrap, problem, -1);
+    } else if(dx >= threshold){
+      commitSwipe(wrap, problem, 1);
+    } else {
+      wrap.classList.add('snap-back');
+      wrap.style.transform = '';
+      stampHard.style.opacity = 0;
+      stampEasy.style.opacity = 0;
+    }
+  }
+  tcard.addEventListener('pointerdown', onDown);
+  tcard.addEventListener('pointermove', onMove);
+  tcard.addEventListener('pointerup', onUp);
+  tcard.addEventListener('pointercancel', onUp);
+}
+
+function commitSwipe(wrap, problem, direction){
+  // direction -1 = left = hard, +1 = right = easy
+  wrap.classList.add('fly-out');
+  const flyX = direction * 600;
+  wrap.style.transform = `translate(${flyX}px, -40px) rotate(${direction * 30}deg)`;
+  wrap.style.opacity = '0';
+  const grade = direction < 0 ? 1 : 3; // hard : easy
+  rate(problem.id, grade);
+  setTimeout(() => {
+    TPOS++;
+    paintTinderStage();
+  }, 260);
+}
+
+document.getElementById('tinderHardBtn').addEventListener('click', () => {
+  if(TPOS >= TDECK.length) return;
+  const wrap = document.querySelector('.tswipe-wrap.top');
+  if(wrap) commitSwipe(wrap, TDECK[TPOS], -1);
+});
+document.getElementById('tinderEasyBtn').addEventListener('click', () => {
+  if(TPOS >= TDECK.length) return;
+  const wrap = document.querySelector('.tswipe-wrap.top');
+  if(wrap) commitSwipe(wrap, TDECK[TPOS], 1);
+});
+
+(async function init(){
+  await loadState();
+  showView('root');
+})();
+</script>
+</body>
+</html>

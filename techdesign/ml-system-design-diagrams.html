@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Top 15 Staff-Level ML System Design Interview Questions — Architecture Diagrams</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --text: #e6edf3;
+    --text-dim: #9aa4b2;
+    --accent: #4493f8;
+    --chip: #21262d;
+    --border: #30363d;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f8fa;
+      --card: #ffffff;
+      --text: #1f2328;
+      --text-dim: #59636e;
+      --accent: #0969da;
+      --chip: #eaeef2;
+      --border: #d1d9e0;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px 16px 80px;
+  }
+  header {
+    max-width: 900px;
+    margin: 0 auto 28px;
+  }
+  h1 {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  header p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  nav {
+    max-width: 900px;
+    margin: 20px auto 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  nav h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  nav ol {
+    columns: 2;
+    column-gap: 24px;
+    padding-left: 18px;
+    font-size: 13.5px;
+  }
+  nav li { margin-bottom: 6px; break-inside: avoid; }
+  nav a { color: var(--accent); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 18px 22px;
+    scroll-margin-top: 16px;
+  }
+  section h2 {
+    font-size: 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  section h2 .num {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  section p.blurb {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin: 6px 0 14px;
+  }
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: -6px 0 14px;
+  }
+  .examples .examples-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-right: 2px;
+  }
+  .examples .chip {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--chip);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+  .diagram {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    overflow-x: auto;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .back-to-top {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  .back-to-top:hover { color: var(--accent); }
+  footer {
+    max-width: 900px;
+    margin: 32px auto 0;
+    color: var(--text-dim);
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Top 15 Staff-Level ML System Design Interview Questions</h1>
+  <p>Architecture diagrams only — each is a common high-level reference shape for the interview, not a complete production design.</p>
+</header>
+
+<nav id="top">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#q1">Recommendation System</a></li>
+    <li><a href="#q2">Search Ranking System</a></li>
+    <li><a href="#q3">Ad Click-Through Rate Prediction</a></li>
+    <li><a href="#q4">Feed Ranking System</a></li>
+    <li><a href="#q5">Fraud Detection System</a></li>
+    <li><a href="#q6">Content Moderation System</a></li>
+    <li><a href="#q7">Feature Store</a></li>
+    <li><a href="#q8">ML Model Serving Platform</a></li>
+    <li><a href="#q9">A/B Testing Platform</a></li>
+    <li><a href="#q10">Real-Time Personalization</a></li>
+    <li><a href="#q11">RAG / Search-Augmented LLM</a></li>
+    <li><a href="#q12">Vector Search / Embedding Retrieval</a></li>
+    <li><a href="#q13">Demand Forecasting System</a></li>
+    <li><a href="#q14">Spam / Abuse Detection</a></li>
+    <li><a href="#q15">Online Learning / Retraining Pipeline</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="q1">
+  <h2><span class="num">1.</span> Design a Recommendation System (e.g. Netflix, YouTube)</h2>
+  <p class="blurb">Tests the candidate-generation-then-ranking funnel, feature store usage, and offline/online consistency.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Netflix</span><span class="chip">YouTube</span><span class="chip">Amazon</span><span class="chip">Spotify</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  User[User Request] --> API[Recommendation API]
+  API --> CandGen[Candidate Generation<br/>ANN / embedding retrieval]
+  CandGen --> ItemEmb[(Item Embedding Store)]
+  API --> Ranker[Ranking Model<br/>deep model, pointwise/pairwise]
+  Ranker --> FeatureStore[(Feature Store<br/>online features)]
+  Ranker --> ModelReg[Model Registry]
+  API --> ReRank[Business Logic / Re-ranking<br/>diversity, freshness]
+  ReRank --> User
+  Events[User Events] --> Kafka[(Event Stream)]
+  Kafka --> FeatureStore
+  Kafka --> TrainPipeline[Offline Training Pipeline]
+  TrainPipeline --> ModelReg
+  </pre>
+</section>
+
+<section id="q2">
+  <h2><span class="num">2.</span> Design a Search Ranking System (e.g. Google Search, Amazon Search)</h2>
+  <p class="blurb">Tests multi-stage retrieval (recall then rank), feature freshness, and learning-to-rank objectives.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Google Search</span><span class="chip">Amazon Product Search</span><span class="chip">Airbnb Search</span><span class="chip">Etsy Search</span>
+  </p>
+  <pre class="mermaid diagram">
+graph LR
+  Query[User Query] --> QU[Query Understanding<br/>NER, spell correct, intent]
+  QU --> Retrieval[Candidate Retrieval<br/>inverted index + ANN]
+  Retrieval --> Index[(Search Index)]
+  Retrieval --> L1[L1 Ranker<br/>lightweight, GBDT]
+  L1 --> L2[L2 Ranker<br/>deep model, learning-to-rank]
+  L2 --> FeatureStore[(Online Feature Store)]
+  L2 --> Results[Ranked Results]
+  ClickLogs[Click / Impression Logs] --> Kafka[(Event Stream)]
+  Kafka --> TrainPipeline[Offline Training<br/>LTR pipeline]
+  TrainPipeline --> L2
+  </pre>
+</section>
+
+<section id="q3">
+  <h2><span class="num">3.</span> Design an Ad Click-Through Rate Prediction System (e.g. Google Ads)</h2>
+  <p class="blurb">Tests real-time low-latency inference, sparse-feature embeddings, and calibration at massive scale.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Google Ads</span><span class="chip">Meta Ads Manager</span><span class="chip">LinkedIn Ads</span><span class="chip">TikTok Ads</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  AdReq[Ad Request] --> Auction[Ad Auction Service]
+  Auction --> CTRModel[CTR Prediction Service<br/>DeepFM / wide &amp; deep]
+  CTRModel --> FeatureStore[(Online Feature Store<br/>low-latency KV)]
+  CTRModel --> EmbCache[(Embedding Cache)]
+  Auction --> Pricing[Pricing / Bid Ranking<br/>bid x pCTR]
+  Pricing --> AdReq
+  Impression[Impression / Click Events] --> Kafka[(Event Stream)]
+  Kafka --> LabelJoin[Label Joining<br/>attribution window]
+  LabelJoin --> TrainPipeline[Offline Training Pipeline]
+  TrainPipeline --> ModelReg[Model Registry]
+  ModelReg --> CTRModel
+  </pre>
+</section>
+
+<section id="q4">
+  <h2><span class="num">4.</span> Design a Feed Ranking System (e.g. Facebook/Instagram Feed)</h2>
+  <p class="blurb">Tests multi-objective ranking (engagement vs. wellbeing), score blending, and freshness under a fan-out pipeline.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Facebook Feed</span><span class="chip">Instagram Feed</span><span class="chip">LinkedIn Feed</span><span class="chip">TikTok For You</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client[Client requests feed] --> FeedSvc[Feed Service]
+  FeedSvc --> Candidates[Candidate Pool<br/>follow graph + recs]
+  Candidates --> Scorer[Multi-task Ranking Model<br/>P(like), P(comment), P(watch)]
+  Scorer --> FeatureStore[(Feature Store)]
+  Scorer --> ValueModel[Value Model<br/>combine task scores]
+  ValueModel --> Rules[Integrity / Policy Filters]
+  Rules --> Client
+  Engagement[Engagement Events] --> Kafka[(Event Stream)]
+  Kafka --> Labeler[Label Generation]
+  Labeler --> Training[Offline Training Pipeline]
+  Training --> Scorer
+  </pre>
+</section>
+
+<section id="q5">
+  <h2><span class="num">5.</span> Design a Fraud Detection System (e.g. PayPal, Stripe Radar)</h2>
+  <p class="blurb">Tests real-time scoring under strict latency budgets, feature freshness, and training on imbalanced labels.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">PayPal</span><span class="chip">Stripe Radar</span><span class="chip">Visa fraud systems</span><span class="chip">Square</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Txn[Transaction Request] --> Gateway[Fraud Scoring Gateway]
+  Gateway --> RulesEngine[Rules Engine<br/>hard blocks]
+  Gateway --> MLModel[ML Fraud Model<br/>GBDT / graph features]
+  MLModel --> FeatureStore[(Real-time Feature Store<br/>velocity, device, graph)]
+  MLModel --> GraphDB[(Entity Graph<br/>device/card/account links)]
+  Gateway --> Decision{Score &gt; threshold?}
+  Decision -->|block/review| CaseQueue[Manual Review Queue]
+  Decision -->|allow| Txn
+  CaseQueue --> Labels[(Labeled Outcomes)]
+  Labels --> Kafka[(Event Stream)]
+  Kafka --> Training[Offline Training Pipeline<br/>handles class imbalance]
+  Training --> MLModel
+  </pre>
+</section>
+
+<section id="q6">
+  <h2><span class="num">6.</span> Design a Content Moderation System (e.g. Facebook, YouTube)</h2>
+  <p class="blurb">Tests human-in-the-loop review queues, multi-modal classifiers, and precision/recall trade-offs at platform scale.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Facebook</span><span class="chip">YouTube</span><span class="chip">TikTok</span><span class="chip">Reddit</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Upload[Content Upload] --> Pipeline[Ingestion Pipeline]
+  Pipeline --> TextModel[Text Classifier<br/>hate speech, spam]
+  Pipeline --> ImageModel[Image / Video Classifier<br/>CV model]
+  TextModel --> ScoreAgg[Score Aggregator]
+  ImageModel --> ScoreAgg
+  ScoreAgg --> Policy{Policy Thresholds}
+  Policy -->|auto-remove| Removed[Content Removed]
+  Policy -->|uncertain| ReviewQueue[Human Review Queue]
+  Policy -->|clean| Publish[Content Published]
+  ReviewQueue --> Reviewers[Human Reviewers]
+  Reviewers --> Labels[(Labeled Data)]
+  Labels --> Training[Offline Retraining Pipeline]
+  Training --> TextModel
+  Training --> ImageModel
+  </pre>
+</section>
+
+<section id="q7">
+  <h2><span class="num">7.</span> Design a Feature Store (e.g. Uber Michelangelo, Feast)</h2>
+  <p class="blurb">Tests online/offline feature parity, point-in-time correctness, and low-latency feature serving.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Uber Michelangelo</span><span class="chip">Feast</span><span class="chip">Airbnb Zipline</span><span class="chip">DoorDash Feature Store</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Sources[Raw Data Sources<br/>events, DBs, streams] --> Batch[Batch Feature Pipeline]
+  Sources --> Streaming[Streaming Feature Pipeline]
+  Batch --> OfflineStore[(Offline Store<br/>data warehouse, versioned)]
+  Streaming --> OnlineStore[(Online Store<br/>low-latency KV)]
+  OfflineStore -.materialize.-> OnlineStore
+  Registry[Feature Registry<br/>definitions, metadata] --- Batch
+  Registry --- Streaming
+  TrainingJob[Model Training Job] -->|point-in-time join| OfflineStore
+  ServingModel[Online Model Serving] -->|feature lookup| OnlineStore
+  </pre>
+</section>
+
+<section id="q8">
+  <h2><span class="num">8.</span> Design an ML Model Serving Platform (e.g. TensorFlow Serving, SageMaker)</h2>
+  <p class="blurb">Tests model packaging, canary rollout, autoscaling, and latency/throughput trade-offs across model types.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">TensorFlow Serving</span><span class="chip">Uber Michelangelo</span><span class="chip">AWS SageMaker</span><span class="chip">Seldon Core</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client[Client App] --> Gateway[Inference Gateway / Router]
+  Gateway --> Registry[Model Registry<br/>versioned artifacts]
+  Gateway --> ShadowModel[Shadow / Canary Model]
+  Gateway --> ProdModel[Production Model Pods<br/>autoscaled]
+  ProdModel --> FeatureStore[(Online Feature Store)]
+  ProdModel --> Cache[(Prediction Cache)]
+  Gateway --> Monitor[Latency / Drift Monitoring]
+  Monitor -->|alerts| Rollback[Auto-Rollback Controller]
+  Rollback --> Registry
+  </pre>
+</section>
+
+<section id="q9">
+  <h2><span class="num">9.</span> Design an A/B Testing / Experimentation Platform (e.g. Netflix, Airbnb)</h2>
+  <p class="blurb">Tests randomization/bucketing correctness, statistical power, and guardrail-metric monitoring at scale.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Netflix XP</span><span class="chip">Airbnb ERF</span><span class="chip">LinkedIn</span><span class="chip">Optimizely</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client[Client Request] --> Assign[Assignment Service<br/>consistent-hash bucketing]
+  Assign --> ConfigSvc[Experiment Config Service]
+  ConfigSvc --> ConfigDB[(Experiment Definitions)]
+  Assign --> Client
+  Client --> Events[Exposure / Outcome Events]
+  Events --> Kafka[(Event Stream)]
+  Kafka --> Warehouse[(Analytics Warehouse)]
+  Warehouse --> StatsEngine[Stats Engine<br/>significance, sequential testing]
+  StatsEngine --> Dashboard[Experiment Dashboard]
+  StatsEngine --> Guardrails[Guardrail Alerting]
+  </pre>
+</section>
+
+<section id="q10">
+  <h2><span class="num">10.</span> Design a Real-Time Personalization System (e.g. Amazon Homepage)</h2>
+  <p class="blurb">Tests session-based modeling, sub-100ms feature lookups, and blending real-time signals with batch models.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Amazon "customers who bought"</span><span class="chip">Netflix homepage rows</span><span class="chip">DoorDash home feed</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  User[User Session] --> Events[Real-time Event Stream<br/>clicks, views]
+  Events --> Kafka[(Kafka)]
+  Kafka --> SessionFeatures[Session Feature Aggregator]
+  SessionFeatures --> OnlineStore[(Online Feature Store)]
+  Request[Personalization Request] --> Service[Personalization Service]
+  Service --> OnlineStore
+  Service --> BatchModel[Batch-trained Model<br/>long-term preferences]
+  Service --> RealTimeModel[Real-time Re-ranker<br/>session context]
+  BatchModel --> Blend[Score Blending]
+  RealTimeModel --> Blend
+  Blend --> User
+  </pre>
+</section>
+
+<section id="q11">
+  <h2><span class="num">11.</span> Design a RAG / Search-Augmented LLM System (e.g. Enterprise Search Assistant)</h2>
+  <p class="blurb">Tests retrieval-generation orchestration, grounding/hallucination control, and latency of the retrieve-then-generate loop.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">ChatGPT browsing/plugins</span><span class="chip">Perplexity</span><span class="chip">Enterprise search assistants</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  User[User Query] --> Orchestrator[RAG Orchestrator]
+  Orchestrator --> Retriever[Retriever<br/>dense + keyword hybrid]
+  Retriever --> VectorDB[(Vector Store<br/>embeddings)]
+  Retriever --> DocStore[(Document Store)]
+  Orchestrator --> Reranker[Re-ranker<br/>cross-encoder]
+  Reranker --> PromptBuilder[Prompt Assembly<br/>context + citations]
+  PromptBuilder --> LLM[LLM Inference Service]
+  LLM --> Guardrails[Output Guardrails<br/>grounding check]
+  Guardrails --> User
+  Ingestion[Document Ingestion Pipeline] --> Embedder[Embedding Model]
+  Embedder --> VectorDB
+  Ingestion --> DocStore
+  </pre>
+</section>
+
+<section id="q12">
+  <h2><span class="num">12.</span> Design a Vector Search / Embedding Retrieval System (e.g. Pinecone, FAISS at scale)</h2>
+  <p class="blurb">Tests ANN index selection, sharding embeddings at scale, and recall/latency trade-offs.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Pinecone</span><span class="chip">Meta FAISS</span><span class="chip">Google ScaNN</span><span class="chip">Spotify Annoy</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Client[Query Embedding] --> Router[Shard Router]
+  Router --> Shard1[ANN Index Shard 1<br/>HNSW / IVF]
+  Router --> Shard2[ANN Index Shard 2]
+  Router --> Shard3[ANN Index Shard 3]
+  Shard1 --> Merge[Result Merger<br/>top-K aggregation]
+  Shard2 --> Merge
+  Shard3 --> Merge
+  Merge --> Client
+  Ingest[Embedding Ingestion] --> IndexBuilder[Index Builder<br/>batch/incremental]
+  IndexBuilder --> Shard1
+  IndexBuilder --> Shard2
+  IndexBuilder --> Shard3
+  Ingest --> ObjStore[(Raw Embedding Store)]
+  </pre>
+</section>
+
+<section id="q13">
+  <h2><span class="num">13.</span> Design a Demand / Time-Series Forecasting System (e.g. Uber ETA, Amazon Inventory)</h2>
+  <p class="blurb">Tests hierarchical forecasting, seasonality/backtesting, and feeding forecasts into downstream decisions.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Uber ETA / demand</span><span class="chip">Amazon inventory forecasting</span><span class="chip">Airbnb pricing</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Sources[Historical Data<br/>orders, traffic, weather] --> ETL[Feature ETL Pipeline]
+  ETL --> FeatureStore[(Time-series Feature Store)]
+  FeatureStore --> Trainer[Model Trainer<br/>per-segment models]
+  Trainer --> Backtest[Backtesting / Validation]
+  Backtest --> ModelReg[Model Registry]
+  ModelReg --> ForecastSvc[Forecast Serving Service]
+  ForecastSvc --> Consumers[Downstream Consumers<br/>pricing, staffing, inventory]
+  Realtime[Real-time Signals] --> Adjuster[Short-horizon Adjustment Layer]
+  Adjuster --> ForecastSvc
+  </pre>
+</section>
+
+<section id="q14">
+  <h2><span class="num">14.</span> Design a Spam / Abuse Detection System (e.g. Gmail Spam Filter)</h2>
+  <p class="blurb">Tests adversarial robustness, rapid feature iteration against evolving attacks, and low false-positive tolerance.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Gmail spam filter</span><span class="chip">LinkedIn fake account detection</span><span class="chip">Twitter/X spam</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Content[Incoming Content / Account Activity] --> Extractor[Feature Extractor<br/>text, behavior, graph]
+  Extractor --> RulesEngine[Adversarial Rules Engine]
+  Extractor --> MLModel[ML Classifier<br/>ensemble]
+  MLModel --> FeatureStore[(Feature Store)]
+  MLModel --> GraphSignals[(Account/IP Graph Signals)]
+  RulesEngine --> Decision{Spam Score}
+  MLModel --> Decision
+  Decision -->|block| Quarantine[Quarantine]
+  Decision -->|allow| Deliver[Deliver Content]
+  Decision -->|uncertain| Review[Human Review]
+  Review --> Labels[(Labeled Feedback)]
+  Labels --> Retrain[Rapid Retraining Pipeline]
+  Retrain --> MLModel
+  </pre>
+</section>
+
+<section id="q15">
+  <h2><span class="num">15.</span> Design an Online Learning / Continuous Retraining Pipeline (e.g. Ad Ranking Freshness)</h2>
+  <p class="blurb">Tests streaming label joining, drift detection, and safe automated model promotion without a human bottleneck.</p>
+  <p class="examples"><span class="examples-label">Real-world:</span>
+    <span class="chip">Ad ranking freshness at Google/Meta</span><span class="chip">TikTok recommender updates</span>
+  </p>
+  <pre class="mermaid diagram">
+graph TD
+  Prod[Production Model] --> Serve[Serving Traffic]
+  Serve --> Logs[Prediction + Outcome Logs]
+  Logs --> Kafka[(Event Stream)]
+  Kafka --> LabelJoiner[Streaming Label Joiner<br/>delayed feedback handling]
+  LabelJoiner --> OnlineTrainer[Online / Incremental Trainer]
+  OnlineTrainer --> CandidateModel[Candidate Model]
+  CandidateModel --> Eval[Automated Offline Eval]
+  Eval --> DriftCheck{Drift / Regression Check}
+  DriftCheck -->|pass| Canary[Canary Deployment]
+  DriftCheck -->|fail| Reject[Reject + Alert]
+  Canary -->|metrics ok| Prod
+  </pre>
+</section>
+
+</main>
+
+<footer>
+  Diagrams are simplified reference architectures for interview discussion, not production blueprints.
+  <br><a href="#top" class="back-to-top">Back to top</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  function currentTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
+  }
+  mermaid.initialize({ startOnLoad: true, theme: currentTheme(), securityLevel: 'strict' });
+</script>
+
+</body>
+</html>

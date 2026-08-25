@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F5F8">
 <title>Foundations Practice</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,6 +145,13 @@
   @media (max-width: 880px) {
     .layout { grid-template-columns: 1fr; }
     .nav-panel { order: 2; }
+  }
+  @media (max-width: 560px) {
+    .topbar-inner { flex-wrap: wrap; padding: 10px 16px; row-gap: 8px; }
+    .brand { flex-basis: 100%; }
+    .topbar-spacer { display: none; }
+    .score-chip { order: 1; flex: 1 1 auto; min-width: 0; white-space: normal; font-size: 0.72rem; padding: 6px 10px; }
+    .icon-btn { order: 2; flex-shrink: 0; }
   }
 
   /* ---------- Navigator (answer-sheet grid) ---------- */
@@ -306,6 +319,8 @@
   .hidden { display: none !important; }
   footer.sitefoot { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.75rem; }
 </style>
+</head>
+<body>
 
 <div id="app">
   <header class="topbar">
@@ -2112,3 +2127,5 @@ const SCENARIOS = [
   render();
 })();
 </script>
+</body>
+</html>

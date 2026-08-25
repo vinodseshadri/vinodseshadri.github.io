@@ -129,8 +129,14 @@
     border-radius: 8px;
     padding: 10px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  .diagram svg { max-width: 100%; height: auto; }
+  .diagram svg { height: auto; display: block; }
+  @media (max-width: 480px) {
+    body { padding: 16px 12px 64px; }
+    h1 { font-size: 19px; }
+    nav ol { columns: 1; }
+  }
   .back-to-top {
     display: inline-block;
     margin-top: 12px;
@@ -494,6 +500,17 @@ graph TD
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
   }
   mermaid.initialize({ startOnLoad: true, theme: currentTheme(), securityLevel: 'strict' });
+
+  function fixDiagramSizing() {
+    document.querySelectorAll('.diagram svg').forEach((svg) => {
+      const vb = svg.viewBox && svg.viewBox.baseVal;
+      if (vb && vb.width) {
+        svg.style.width = vb.width + 'px';
+        svg.removeAttribute('width');
+      }
+    });
+  }
+  new MutationObserver(fixDiagramSizing).observe(document.querySelector('main'), { childList: true, subtree: true });
 </script>
 
 </body>

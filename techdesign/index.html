@@ -250,10 +250,472 @@
     <button class="tab" id="tab-saved">Saved <span id="saved-count"></span></button>
     <div class="counter" id="counter"></div>
   </div>
-  <div class="chips" id="chips"><button class="chip active" data-category="All">All</button><button class="chip" data-category="Tier 1 Engineering Blogs">Tier 1 Engineering Blogs</button><button class="chip" data-category="LLM Inference &amp; AI Labs">LLM Inference &amp; AI Labs</button><button class="chip" data-category="FAANG Engineering">FAANG Engineering</button><button class="chip" data-category="Systems Design &amp; Distributed Systems">Systems Design &amp; Distributed Systems</button></div>
+  <div class="chips" id="chips"><button class="chip active" data-category="All">All</button><button class="chip" data-category="LLM Inference &amp; AI Labs">LLM Inference &amp; AI Labs</button><button class="chip" data-category="Systems Design &amp; Distributed Systems">Systems Design &amp; Distributed Systems</button><button class="chip" data-category="FAANG Engineering">FAANG Engineering</button><button class="chip" data-category="Tier 1 Engineering Blogs">Tier 1 Engineering Blogs</button></div>
 </header>
 
 <main id="feed">
+
+<article class="card" data-url="https://www.phoronix.com/news/Linux-Considers-AGENTS-MD" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://www.phoronix.net/image.php?id=2026&amp;image=agents_md" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T08:36:59+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Linux Kernel Developers Consider Adding Agents.md to Help Guide AI/LLM Agents</h2>
+      <p class="summary">Michael Larabel is the principal author of Phoronix.com and founded the site in 2004 with a focus on enriching the Linux hardware experience. Michael has written more than 20,000 articles covering the state of Linux hardware support, Linux performance, graphics drivers, and other topics. Michael is also the lead developer of the Phoronix Test Suite, Phoromatic, and OpenBenchmarking.org automated benchmarking software. He can be followed via…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.phoronix.com/news/Linux-Considers-AGENTS-MD" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://eunomia.dev/blog/2026/09/24/qwen3-ebpf-in-kernel-inference/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://eunomia.dev/og/default.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T07:52:02+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Can a language model run in Linux eBPF?</h2>
+      <p class="summary">Can Linux eBPF execute a real language model? A Qwen3-0.6B experiment shows exactly which work runs in the kernel, how fast it is, and why INT4 and arena memory remain open tradeoffs. Linux eBPF programs usually observe or influence work done elsewhere: trace a syscall, filter a packet, or choose a scheduling policy. qwen3-ebpf asks a different question. Could a verified BPF program do the numerical work of a real language model, rather than…</p>
+      <div class="actions">
+        <a class="read-link" href="https://eunomia.dev/blog/2026/09/24/qwen3-ebpf-in-kernel-inference/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://twitter.com/steipete/status/2103648679169257737" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://pbs.twimg.com/profile_images/1131851609774985216/OcsssQ9J_400x400.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-26T07:32:42+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Biggest design mistake I made when we moved OpenClaw to SQLite: using sync db</h2>
+      <p class="summary">The biggest design mistake I made when we moved OC to sqlite: using sync db access. When it was just an agent that reports to you on Slack or iMessage this was fine; now that one agent might do 50 sessions in parallel and the whole team works on it, it is limiting. I have a /goal with Astra that s…</p>
+      <div class="actions">
+        <a class="read-link" href="https://twitter.com/steipete/status/2103648679169257737" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://arxiv.org/abs/2609.29845" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://static.arxiv.org/icons/twitter/arxiv-logo-twitter-square.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T06:07:08+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Transformer Can Hold Two Thoughts at Once: Evidence of Linear</h2>
+      <p class="summary">arXivLabs is a framework that allows collaborators to develop and share new arXiv features directly on our website. Both individuals and organizations that work with arXivLabs have embraced and accepted our values of openness, community, excellence, and user data privacy. arXiv is committed to these values and only works with partners that adhere to them. Have an idea for a project that will add value for arXiv&#x27;s community? Learn more about…</p>
+      <div class="actions">
+        <a class="read-link" href="https://arxiv.org/abs/2609.29845" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://twitter.com/tomekkorbak/status/2103673419888013649" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://pbs.twimg.com/media/HTG-6FhaMAAHWtH?format=webp&amp;name=large" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T05:23:19+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>OpenAI pauses RL due to model escaping sandbox</h2>
+      <p class="summary">one news form today that&#x27;s easy to miss is that we (OpenAI) again paused all big RL runs last Sunday because our newest model found a new loophole in our RL sandboxing that gave it live Internet access</p>
+      <div class="actions">
+        <a class="read-link" href="https://twitter.com/tomekkorbak/status/2103673419888013649" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/sfmqrb/gutcheck" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://opengraph.githubassets.com/983ea0373093b21fc3aa9356670352cbd44dc7e478fd719a699127a94dd8b3e5/sfmqrb/gutcheck" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T05:21:34+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: Gutcheck, grep for meaning with a local CPU model</h2>
+      <p class="summary">grep for meaning. Filter, score and classify lines with a plain-English question. One binary, runs locally on CPU. No API key, no Python, no server. Or download a binary (Linux x86_64, macOS arm64) from releases . The first run downloads a 1.3 GB model to $XDG_CACHE_HOME/gutcheck . One line in, one line out, streamed, so tail -f and | head work. Like grep, filter mode exits 1 when nothing matched. NO_COLOR=1 turns colors off; pipes are never…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/sfmqrb/gutcheck" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://kenforthewin.github.io/blog/posts/llm-nethack-ascension/" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://kenforthewin.github.io/blog/" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T05:18:53+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>An LLM Beat NetHack</h2>
+      <p class="summary">GPT 6 Astra beat NetHack. As far as I can determine, this is the first recorded ascension by an LLM agent. It played NetHack 3.6.7 on Hardfought, through a terminal, as a dwarven Valkyrie named CodexDelver. On September 21, after 37,140 game turns, it ascended. Here’s the server dump , or jump down to explore all three runs . I’ve been working on getting LLMs to play NetHack for a while. Back in January, I wrote about building a harness, trying…</p>
+      <div class="actions">
+        <a class="read-link" href="https://kenforthewin.github.io/blog/posts/llm-nethack-ascension/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://github.com/VBS2004/jevcut" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><img src="https://opengraph.githubassets.com/d3473c62d1c9c3a5cb548f5fb8cc7473d2d561f5c51b03180672c8aebfe126bc/VBS2004/jevcut" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T05:10:44+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Show HN: Jevcut – an auto-clipper where code picks the cut points, not the model</h2>
+      <p class="summary">Turn a long video into short clips that stand on their own — for Shorts, Reels, TikTok, or just a highlights reel. One command in, ranked mp4s out. jevcut transcribes the video, finds the moments worth clipping, decides exactly where each one starts and stops, drops anything that doesn&#x27;t stand alone or turns out to be an ad, and writes ranked mp4s plus a page to watch them on, best first. What makes it different: code lists every place a clip…</p>
+      <div class="actions">
+        <a class="read-link" href="https://github.com/VBS2004/jevcut" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://octet-stream.net/b/scb/2026-09-26-getting-deeper-into-local-inference.html" data-category="LLM Inference &amp; AI Labs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(253,45%,32%),hsl(303,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — LLM &amp; AI Inference</span>
+        <span>LLM Inference &amp; AI Labs</span>
+        <span>·</span>
+        <span data-published="2026-09-26T04:44:39+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Getting Deeper into Local Inference</h2>
+      <p class="summary">Iâve reached the point with my personal LLM usageâQ&amp;A, coding, sysadmin, web researchâthat I no longer need a cloud provider like ChatGPT or Claude. A local model is working just fine. Two recent developments have made this possible. One is the release of Qwen3.8-27B. This is the first model Iâve used offline that meets all the criteria: intelligence, token rate, and tolerable VRAM requirements. Even though itâs a âsmallâ model…</p>
+      <div class="actions">
+        <a class="read-link" href="https://octet-stream.net/b/scb/2026-09-26-getting-deeper-into-local-inference.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.rnz.co.nz/news/world/1591943/us-lawmakers-aim-to-keep-china-s-tech-out-of-sensitive-government-systems" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-26T03:46:39+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>US lawmakers aim to keep China&#x27;s tech out of sensitive government systems</h2>
+      <p class="summary">Link: https://www.rnz.co.nz/news/eyJhbGciOiJIUzI1NiJ9._g.pKhUMkRnoOZwX4iq2fhLAqba5Rz0jb3mINKRqASmxf0/world/1591943%2Fus-lawmakers-aim-to-keep-china-s-tech-out-of-sensitive-government-systems A bipartisan group of US lawmakers has introduced legislation to bar the federal government from equipping sensitive government systems with Chinese-made components used to transmit data in AI data centres. The devices, known as optical transceivers, allow…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.rnz.co.nz/news/world/1591943/us-lawmakers-aim-to-keep-china-s-tech-out-of-sensitive-government-systems" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.hpcwire.com/off-the-wire/memq-releases-open-sourced-distributed-quantum-compiler/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://www.hpcwire.com/wp-content/uploads/2026/03/memq-logo.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-26T03:23:38+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Distributed Quantum Compiler (DQC / XDQC) by MemQ open-source now</h2>
+      <p class="summary">Industry’s first open-source, qubit agnostic distributed quantum compiler brings scale-out deployment capability to a previously monolithic market CHICAGO, Sept. 24, 2026 — memQ , an industry leader in quantum networking for scalable and distributed quantum computing, announced today the public release of its distributed quantum compiler (DQC). This integral part of a distributed quantum computing environment will be released as a publicly…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.hpcwire.com/off-the-wire/memq-releases-open-sourced-distributed-quantum-compiler/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.nytimes.com/2026/09/25/technology/openais-ai-us-government-websites.html" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-25T23:22:18+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>OpenAI’s Systems Went Rogue and Meddled With U.S. Government Websites</h2>
+      <p class="summary">No summary available.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.nytimes.com/2026/09/25/technology/openais-ai-us-government-websites.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://bair.berkeley.edu/blog/2024/02/18/compound-ai-systems/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="http://bair.berkeley.edu/blog/assets/compound-ai-systems/compound-ai-systems.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-25T22:43:35+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>The Shift from Models to Compound AI Systems</h2>
+      <p class="summary">AI caught everyoneâs attention in 2023 with Large Language Models (LLMs) that can be instructed to perform general tasks, such as translation or coding, just by prompting. This naturally led to an intense focus on models as the primary ingredient in AI application development, with everyone wondering what capabilities new LLMs will bring. As more developers begin to build using LLMs, however, we believe that this focus is rapidly changing:…</p>
+      <div class="actions">
+        <a class="read-link" href="https://bair.berkeley.edu/blog/2024/02/18/compound-ai-systems/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://spectrum.ieee.org/social-media-bans" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://spectrum.ieee.org/media-library/image.jpg?id=67777766&amp;width=1200&amp;height=600&amp;coordinates=0%2C125%2C0%2C125" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-25T22:32:10+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Social Media Bans for Kids Need Smarter Safety Design</h2>
+      <p class="summary">Online child safety deserves more nuanced policy</p>
+      <div class="actions">
+        <a class="read-link" href="https://spectrum.ieee.org/social-media-bans" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.pascalgillet.net/hurray/docs/dev/prior-art.html" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><div class="placeholder">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-25T22:14:30+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Tensor Data Interchange for AI/ML Systems: A Survey and the Hurray Proposal</h2>
+      <p class="summary">Hurray project: https://pgillet.github.io/hurray/ Source code and specification: https://github.com/pgillet/hurray AI/ML systems move large amounts of tensor data between libraries, processes, machines, accelerators, and storage. Model weights are loaded from files into accelerator memory. Frameworks exchange tensors without copying them. Distributed training splits tensors across GPUs. Disaggregated inference transfers key-value (KV) caches…</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.pascalgillet.net/hurray/docs/dev/prior-art.html" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://cyberscoop.com/supreme-court-save-database-voter-citizenship/" data-category="Systems Design &amp; Distributed Systems">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(78,45%,32%),hsl(128,50%,18%))"><img src="https://cyberscoop.com/wp-content/uploads/sites/3/2025/10/GettyImages-1980020893.jpg" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">HN</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Hacker News — Systems &amp; Distributed</span>
+        <span>Systems Design &amp; Distributed Systems</span>
+        <span>·</span>
+        <span data-published="2026-09-25T19:28:30+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Supreme Court permits states to use SAVE database for citizenship checks</h2>
+      <p class="summary">The U.S. Supreme Court ruled Friday that states may use the federal SAVE database to verify voter citizenship, reversing lower court decisions that found the database was inaccurate and would likely disenfranchise eligible voters. In its opinion , the majority wrote that “the Federal Government has an obligation to respond to requests from state and local election officials seeking to verify the citizenship of voters.” “The District Court’s…</p>
+      <div class="actions">
+        <a class="read-link" href="https://cyberscoop.com/supreme-court-save-database-voter-citizenship/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://netflixtechblog.com/trading-a-cloud-identity-for-your-own-workload-attestation-on-managed-compute-516d5a29b252?source=rss----2615bd06b42e---4" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(310,45%,32%),hsl(0,50%,18%))"><img src="https://cdn-images-1.medium.com/max/1024/1*eIWpHw7J_6qZCuaffD0lQQ.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">NT</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Netflix Tech Blog</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-09-25T16:01:03+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Trading a Cloud Identity for Your Own: Workload Attestation on Managed Compute</h2>
+      <p class="summary">By Dhruv Pratap Introduction Organizations that have been around for a while usually run two identity systems side by side. One belongs to the cloud provider: IAM roles, instance profiles, execution roles. The other is your own, and it is the one your internal services actually check when they decide whether to answer a request. On infrastructure you build yourself, you can bootstrap your own identity however you like. On managed compute you…</p>
+      <div class="actions">
+        <a class="read-link" href="https://netflixtechblog.com/trading-a-cloud-identity-for-your-own-workload-attestation-on-managed-compute-516d5a29b252?source=rss----2615bd06b42e---4" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.databricks.com/blog/data-dialogue-how-sp-global-energy-made-its-structured-data-estate-conversational-databricks" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-09/Untitled-design-11.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Databricks Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-09-25T16:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>From Data to Dialogue: How S&amp;P Global Energy Made Its Structured Data Estate Conversational with Databricks Genie Agents and MCP</h2>
+      <p class="summary">S&amp;P Global&#x27;s goal was to fundamentally improve how customers discover and consume...</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.databricks.com/blog/data-dialogue-how-sp-global-energy-made-its-structured-data-estate-conversational-databricks" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://medium.com/pinterest-engineering/partition-finalization-in-pinterests-next-generation-db-ingestion-framework-4c7da6e4cc8f?source=rss----4c5a5f6279b6---4" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(21,45%,32%),hsl(71,50%,18%))"><img src="https://cdn-images-1.medium.com/max/1024/1*RYnr5fSTAfCGM8R9wcHr_w.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PE</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Pinterest Engineering</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-09-25T15:01:03+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Partition Finalization in Pinterest’s Next-Generation DB Ingestion Framework</h2>
+      <p class="summary">Qianrui Zhang | Sr Software Engineer, Logging Platform Kanchi Masalia | Software Engineer II, Stream Processing Platform Liang Mou | Sr Staff Software Engineer, Logging Platform Yi Pan | Principal Engineer, Agent Platform Introduction This is the third post in our series on Pinterest’s next-generation database ingestion framework. Part 1 introduced the DB ingestion framework built on Kafka, Flink, Spark, and Iceberg, and Part 2 covered automated…</p>
+      <div class="actions">
+        <a class="read-link" href="https://medium.com/pinterest-engineering/partition-finalization-in-pinterests-next-generation-db-ingestion-framework-4c7da6e4cc8f?source=rss----4c5a5f6279b6---4" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://www.amazon.science/blog/a-kernel-centric-path-to-real-time-video-generation-on-trainium" data-category="FAANG Engineering">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(24,45%,32%),hsl(74,50%,18%))"><img src="https://cdn.amazon.science/64/06/65de2b8949c5ad6788d04e1cd813/trainium-cover.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AS</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Amazon Science</span>
+        <span>FAANG Engineering</span>
+        <span>·</span>
+        <span data-published="2026-09-25T14:55:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>A kernel-centric path to real-time video generation on Trainium</h2>
+      <p class="summary">Using the Neuron Kernel Interface, a Reactor–AWS collaboration tackled the dynamic shapes, memory access patterns, and cache management that make real-time autoregressive diffusion hard—building techniques that generalize across models.</p>
+      <div class="actions">
+        <a class="read-link" href="https://www.amazon.science/blog/a-kernel-centric-path-to-real-time-video-generation-on-trainium" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
+
+<article class="card" data-url="https://blog.cloudflare.com/turnstile-spin/" data-category="Tier 1 Engineering Blogs">
+  <div class="card-inner">
+    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01M3CQMQWGC7WBK8ZR7DG13PFE.01M3CQMRMEBSVS7GAD6GNHZ9JD.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
+    <div class="body">
+      <div class="meta">
+        <span class="source">Cloudflare Blog</span>
+        <span>Tier 1 Engineering Blogs</span>
+        <span>·</span>
+        <span data-published="2026-09-25T13:00:00+00:00"></span>
+        <span class="seen"></span>
+      </div>
+      <h2>Agents can now set up your website’s security with Turnstile Spin</h2>
+      <p class="summary">Misconfiguring Turnstile by skipping backend validation leaves sites exposed to bots. Turnstile Spin fixes incomplete setups by using your preferred AI coding agent to wire up server-side verification.</p>
+      <div class="actions">
+        <a class="read-link" href="https://blog.cloudflare.com/turnstile-spin/" target="_blank" rel="noopener">Read full post →</a>
+        <button class="save-btn" title="Save for later">☆</button>
+      </div>
+      <div class="swipe-hint">swipe up for next</div>
+    </div>
+  </div>
+</article>
 
 <article class="card" data-url="https://www.databricks.com/blog/running-open-jev-sql-databricks" data-category="Tier 1 Engineering Blogs">
   <div class="card-inner">
@@ -2014,186 +2476,10 @@
     </div>
   </div>
 </article>
-
-<article class="card" data-url="https://www.databricks.com/blog/radar-catch-gray-failures-anomaly-detection" data-category="Tier 1 Engineering Blogs">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/2026-08/databricks-og-universal.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">Databricks Blog</span>
-        <span>Tier 1 Engineering Blogs</span>
-        <span>·</span>
-        <span data-published="2026-09-19T00:00:00+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>RADAR: Catch gray failures with anomaly detection</h2>
-      <p class="summary">Some of the most damaging outages are the ones your monitoring never flags: a slice...</p>
-      <div class="actions">
-        <a class="read-link" href="https://www.databricks.com/blog/radar-catch-gray-failures-anomaly-detection" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://aws.amazon.com/blogs/architecture/readyons-four-walls-of-tenant-isolation-on-amazon-eks/" data-category="FAANG Engineering">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(348,45%,32%),hsl(38,50%,18%))"><img src="https://d2908q01vomqb2.cloudfront.net/fc074d501302eb2b93e2554793fcaf50b3bf7291/2026/09/10/ARCHBLOG-1562-1.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AA</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">AWS Architecture Blog</span>
-        <span>FAANG Engineering</span>
-        <span>·</span>
-        <span data-published="2026-09-18T21:33:13+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>ReadyOn’s Four Walls of tenant isolation on Amazon EKS</h2>
-      <p class="summary">ReadyOn runs a multi-tenant platform on Amazon EKS that handles highly sensitive enterprise data. This post describes their Four Walls model: four independent layers of tenant isolation combining Kubernetes namespaces, Karpenter node pools, Amazon VPC security groups, and per-tenant Amazon Aurora databases for zero-trust defense in depth.</p>
-      <div class="actions">
-        <a class="read-link" href="https://aws.amazon.com/blogs/architecture/readyons-four-walls-of-tenant-isolation-on-amazon-eks/" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://www.databricks.com/blog/enabling-secure-productive-work-personal-devices" data-category="Tier 1 Engineering Blogs">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(206,45%,32%),hsl(256,50%,18%))"><img src="https://www.databricks.com/sites/default/files/blog_images/enabling-secure-productive-work-on-personal-devices-blog-img-og.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">DB</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">Databricks Blog</span>
-        <span>Tier 1 Engineering Blogs</span>
-        <span>·</span>
-        <span data-published="2026-09-18T17:45:00+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>Enabling secure, productive work on personal devices</h2>
-      <p class="summary">At Databricks IT, our vision is to empower people to work from anywhere without putting...</p>
-      <div class="actions">
-        <a class="read-link" href="https://www.databricks.com/blog/enabling-secure-productive-work-personal-devices" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://blog.cloudflare.com/saving-100-tb-of-ram-with-math/" data-category="Tier 1 Engineering Blogs">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(305,45%,32%),hsl(355,50%,18%))"><img src="https://blog.cloudflare.com/_emdash/api/media/file/01M2PFYDRYA8R4X8XVQJYTED8Q.01M2PFYEWJNSK872MVT1JSCHA4.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">CB</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">Cloudflare Blog</span>
-        <span>Tier 1 Engineering Blogs</span>
-        <span>·</span>
-        <span data-published="2026-09-18T17:23:58+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>Saving another 100TB of RAM with math (and Rust)</h2>
-      <p class="summary">Cloudflare&#x27;s global network is immense but not limitless. As we look for small ways to trim our resource usage, we sometimes get lucky and we can cut significantly more. Here’s how we reduced one of our Pingora-based service&#x27;s RAM usage with statistics.</p>
-      <div class="actions">
-        <a class="read-link" href="https://blog.cloudflare.com/saving-100-tb-of-ram-with-math/" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://netflixtechblog.com/leave-the-class-path-in-the-rearview-mirror-67a85b15b6be?source=rss----2615bd06b42e---4" data-category="FAANG Engineering">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(310,45%,32%),hsl(0,50%,18%))"><img src="https://cdn-images-1.medium.com/max/848/1*AkQlaHO9bwLf_dNp-Z2HZQ.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">NT</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">Netflix Tech Blog</span>
-        <span>FAANG Engineering</span>
-        <span>·</span>
-        <span data-published="2026-09-18T16:01:02+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>Leave the Class Path in the Rearview Mirror</h2>
-      <p class="summary">Introducing composable, module system native and agent friendly command line tools for modern Java development By Danny Thomas, JVM Ecosystem Team Recent work on the Java language to pave the on-ramp has made it easier than ever to start a Java program and evolve it using the full language and platform. At the end of that on-ramp lies Java’s mature build and dependency management ecosystem, capable of carrying software to enormous scale and…</p>
-      <div class="actions">
-        <a class="read-link" href="https://netflixtechblog.com/leave-the-class-path-in-the-rearview-mirror-67a85b15b6be?source=rss----2615bd06b42e---4" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://aws.amazon.com/blogs/architecture/how-csiro-built-scalable-cost-optimized-genomic-variant-querying-on-aws/" data-category="FAANG Engineering">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(348,45%,32%),hsl(38,50%,18%))"><img src="https://d2908q01vomqb2.cloudfront.net/fc074d501302eb2b93e2554793fcaf50b3bf7291/2026/09/09/Figure-1-Data-Onboarding.png" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">AA</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">AWS Architecture Blog</span>
-        <span>FAANG Engineering</span>
-        <span>·</span>
-        <span data-published="2026-09-18T14:35:42+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>How CSIRO built scalable, cost-optimized genomic variant querying on AWS</h2>
-      <p class="summary">Learn how researchers at CSIRO, Australia&#x27;s national science agency, built Serverless Beacon (sBeacon), a scalable serverless solution for securely querying genomic variant data on AWS. sBeacon implements the GA4GH Beacon standard using Amazon S3, AWS Lambda, Amazon DynamoDB, and Amazon Athena to support production-scale clinical and research applications.</p>
-      <div class="actions">
-        <a class="read-link" href="https://aws.amazon.com/blogs/architecture/how-csiro-built-scalable-cost-optimized-genomic-variant-querying-on-aws/" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://blog.google/innovation-and-ai/technology/ai/expanding-ai-economy-research-bench/" data-category="FAANG Engineering">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(235,45%,32%),hsl(285,50%,18%))"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/AI__Economy_team_hero.max-600x600.format-webp.webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">GA</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">Google AI Blog</span>
-        <span>FAANG Engineering</span>
-        <span>·</span>
-        <span data-published="2026-09-18T14:00:00+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>New experts join Google’s AI &amp; Economy team</h2>
-      <p class="summary">Text &quot;AI &amp; Economy Research Program&quot; all over a green grid background, with the Google G logo in the bottom right corner</p>
-      <div class="actions">
-        <a class="read-link" href="https://blog.google/innovation-and-ai/technology/ai/expanding-ai-economy-research-bench/" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
-
-<article class="card" data-url="https://blog.google/innovation-and-ai/technology/ai/google-flow-fashion-week/" data-category="FAANG Engineering">
-  <div class="card-inner">
-    <div class="hero" style="background:linear-gradient(135deg,hsl(235,45%,32%),hsl(285,50%,18%))"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Blog_Header_V2.max-600x600.format-webp.webp" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">GA</div></div>
-    <div class="body">
-      <div class="meta">
-        <span class="source">Google AI Blog</span>
-        <span>FAANG Engineering</span>
-        <span>·</span>
-        <span data-published="2026-09-18T13:00:00+00:00"></span>
-        <span class="seen"></span>
-      </div>
-      <h2>Co-creating the future of fashion with Google</h2>
-      <p class="summary">Google worked side-by-side with designers Jane Wade and Sergio Hudson to custom-design Google Flow tools to prep for NYFW.</p>
-      <div class="actions">
-        <a class="read-link" href="https://blog.google/innovation-and-ai/technology/ai/google-flow-fashion-week/" target="_blank" rel="noopener">Read full post →</a>
-        <button class="save-btn" title="Save for later">☆</button>
-      </div>
-      <div class="swipe-hint">swipe up for next</div>
-    </div>
-  </div>
-</article>
 <div class="empty" id="empty"><b>Nothing here</b><span>Tap ☆ on any card to keep it, or pick another category.</span></div>
 <div class="card"><div class="card-inner"><div class="body" style="justify-content:center;text-align:center">
   <h2>That's all for now 🎉</h2>
-  <p class="summary" style="text-align:center">Updated Sep 25, 2026 10:00 UTC · refreshes daily</p>
+  <p class="summary" style="text-align:center">Updated Sep 26, 2026 09:42 UTC · refreshes daily</p>
 </div></div></div>
 </main>
 

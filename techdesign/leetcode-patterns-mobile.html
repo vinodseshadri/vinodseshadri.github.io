@@ -1,0 +1,82 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LeetCode Patterns (mobile)</title><style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;font-size:10pt;line-height:1.3;color:#111;margin:0}
+h1{font-size:15pt;margin:0 0 3px}
+.sub{font-size:9pt;color:#333;margin-bottom:8px}
+.card{border:1.3px solid #222;border-radius:6px;padding:4px 7px;margin:0 0 6px;page-break-inside:avoid}
+.card.alt{background:#efefef}
+.hd{display:block;border-bottom:1px solid #888;padding-bottom:3px;margin-bottom:3px}
+.n{display:inline-block;background:#222;color:#fff;border-radius:50%;width:19px;height:19px;text-align:center;font-size:9pt;line-height:19px;margin-right:6px}
+.nm{font-weight:700;font-size:11.6pt}
+.tm{float:right;font-size:9.4pt;color:#333;border:1px solid #777;border-radius:3px;padding:0 4px;margin-top:1px}
+.tag{font-size:9.4pt;color:#444;font-style:italic;margin-bottom:2px}
+.lb,.lb2{font-size:8.6pt;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#444;margin-top:4px}
+.lb2{margin:0 0 2px;font-size:9.4pt;color:#111}
+code{font-family:Menlo,monospace;font-size:8.8pt;background:#e8e8e8;padding:0 2px}
+</style></head><body><h1>LeetCode Patterns</h1><div class="sub">Read the question &rarr; spot the signal &rarr; pick the pattern. Always: state brute force + complexity first, then optimize. Edge cases: empty, single, duplicates, negatives, overflow.</div><div class="card alt"><div class="lb2">Constraints &rarr; target complexity</div><div>n &le; 20: <code>2^n</code> / backtracking / bitmask &middot; n &le; 500: <code>n³</code> &middot; n &le; 5&times;10³: <code>n²</code> (2D DP) &middot; n &le; 10⁵&ndash;10⁶: <code>n log n</code>&nbsp; or &nbsp;<code>n</code> (sort, heap, window, hash) &middot; n &ge; 10⁹: <code>log n</code> / math</div></div><div class="card alt"><div class="lb2">Keyword &rarr; pattern</div><div>"sorted" &rarr; binary search / two pointers &middot; "contiguous subarray/substring" &rarr; window / prefix sum &middot; "top K", "Kth" &rarr; heap &middot; "all combinations/permutations" &rarr; backtracking &middot; "shortest path (unweighted)" &rarr; BFS &middot; "min/max/count ways" &rarr; DP &middot; "prerequisites/order" &rarr; topo sort &middot; "connected/groups" &rarr; union-find / DFS</div></div><div class="card"><div class="hd"><span class="n">1</span><span class="nm">Hash map / set</span><span class="tm">O(n)</span></div>
+<div class="tag">lookup, count</div>
+<div class="lb">Use when</div><div>Need O(1) lookup, frequency, duplicates, complement, grouping</div>
+<div class="lb">Idea &amp; problems</div><div>Store seen value &rarr; index / count; check <code>target-x</code> before insert. <b>Two Sum, Group Anagrams, Longest Consecutive Sequence, Contains Duplicate, Valid Anagram</b></div></div><div class="card"><div class="hd"><span class="n">2</span><span class="nm">Two pointers</span><span class="tm">O(n)</span></div>
+<div class="tag">opposite ends / read-write</div>
+<div class="lb">Use when</div><div>Sorted array, pair/triple with target, palindrome, in-place removal or partition</div>
+<div class="lb">Idea &amp; problems</div><div><code>l=0,r=n-1</code>: move the side that fixes the inequality. Read/write: <code>w</code> writes, <code>r</code> scans. <b>3Sum, Container With Most Water, Valid Palindrome, Move Zeroes, Remove Duplicates, Trapping Rain Water</b></div></div><div class="card"><div class="hd"><span class="n">3</span><span class="nm">Sliding window</span><span class="tm">O(n)</span></div>
+<div class="tag">variable / fixed</div>
+<div class="lb">Use when</div><div>Contiguous subarray/substring; longest, shortest, "at most K", fixed size k</div>
+<div class="lb">Idea &amp; problems</div><div>Expand <code>r</code>; while invalid, shrink <code>l</code>; update best. Track counts in dict. <b>Longest Substring w/o Repeating, Minimum Window Substring, Longest Repeating Char Replacement, Max Avg Subarray, Permutation in String</b></div></div><div class="card"><div class="hd"><span class="n">4</span><span class="nm">Prefix sum</span><span class="tm">O(n)</span></div>
+<div class="tag">+ hash of prefixes</div>
+<div class="lb">Use when</div><div>Range sum queries; "subarray sum equals K" (negatives allowed, so window fails)</div>
+<div class="lb">Idea &amp; problems</div><div><code>pre[i]=pre[i-1]+a[i]</code>; count of <code>pre-K</code> seen so far. <b>Subarray Sum Equals K, Product of Array Except Self, Range Sum Query, Continuous Subarray Sum</b></div></div><div class="card"><div class="hd"><span class="n">5</span><span class="nm">Fast &amp; slow pointers</span><span class="tm">O(n)</span></div>
+
+<div class="lb">Use when</div><div>Linked-list cycle, middle node, nth from end, happy number</div>
+<div class="lb">Idea &amp; problems</div><div><code>slow=next, fast=next.next</code>; meet &rArr; cycle; reset one to head to find entry. <b>Linked List Cycle I/II, Middle of List, Remove Nth From End, Palindrome LL, Happy Number</b></div></div><div class="card"><div class="hd"><span class="n">6</span><span class="nm">Linked-list ops</span><span class="tm">O(n)</span></div>
+
+<div class="lb">Use when</div><div>Reverse, merge, reorder, detect, insert at head</div>
+<div class="lb">Idea &amp; problems</div><div>Dummy head; iterative reverse <code>prev,cur</code>. <b>Reverse LL, Merge Two Sorted Lists, Reorder List, Add Two Numbers, LRU Cache</b></div></div><div class="card"><div class="hd"><span class="n">7</span><span class="nm">Binary search</span><span class="tm">O(log n)</span></div>
+<div class="tag">on array / on answer</div>
+<div class="lb">Use when</div><div>Sorted or rotated array; "minimum X such that feasible" (monotonic true/false)</div>
+<div class="lb">Idea &amp; problems</div><div><code>while l&lt;=r: mid</code>; shrink to the half that can hold the answer; for "min feasible": <code>l=mid+1 if !ok else r=mid</code>. <b>Search Rotated Array, Find Min in Rotated, Koko Eating Bananas, Capacity to Ship, Median of Two Sorted Arrays</b></div></div><div class="card"><div class="hd"><span class="n">8</span><span class="nm">Stack</span><span class="tm">O(n)</span></div>
+<div class="tag">monotonic stack</div>
+<div class="lb">Use when</div><div>Matching/nesting; "next greater/smaller"; largest rectangle; evaluate expressions</div>
+<div class="lb">Idea &amp; problems</div><div>Push index; pop while top breaks order &rarr; answer for popped. <b>Valid Parentheses, Daily Temperatures, Next Greater Element, Largest Rectangle in Histogram, Min Stack, Decode String</b></div></div><div class="card"><div class="hd"><span class="n">9</span><span class="nm">Heap / top-K</span><span class="tm">O(n log k)</span></div>
+<div class="tag">two heaps, k-way merge</div>
+<div class="lb">Use when</div><div>Top K / Kth largest, running median, merge K sorted, scheduling by priority</div>
+<div class="lb">Idea &amp; problems</div><div>Min-heap of size K for top-K largest; max-heap + min-heap for median. <b>Kth Largest, Top K Frequent, Merge K Sorted Lists, Find Median from Data Stream, Task Scheduler, K Closest Points</b></div></div><div class="card"><div class="hd"><span class="n">10</span><span class="nm">Intervals</span><span class="tm">O(n log n)</span></div>
+
+<div class="lb">Use when</div><div>Merge, insert, overlap, meeting rooms, minimum removals</div>
+<div class="lb">Idea &amp; problems</div><div>Sort by start (or end for greedy); compare <code>cur.start &le; last.end</code>. Rooms: heap of end times. <b>Merge Intervals, Insert Interval, Meeting Rooms I/II, Non-overlapping Intervals</b></div></div><div class="card"><div class="hd"><span class="n">11</span><span class="nm">BFS</span><span class="tm">O(V+E)</span></div>
+<div class="tag">queue, level order</div>
+<div class="lb">Use when</div><div>Shortest path in unweighted graph/grid; level-by-level; multi-source spread; min steps</div>
+<div class="lb">Idea &amp; problems</div><div>Queue + visited; process by level (<code>for _ in range(len(q))</code>). Multi-source: enqueue all sources first. <b>Binary Tree Level Order, Rotting Oranges, Word Ladder, Shortest Path in Binary Matrix, 01 Matrix</b></div></div><div class="card"><div class="hd"><span class="n">12</span><span class="nm">DFS</span><span class="tm">O(V+E)</span></div>
+<div class="tag">trees, graphs, grids</div>
+<div class="lb">Use when</div><div>Explore all; connected regions; tree properties (depth, path, validity)</div>
+<div class="lb">Idea &amp; problems</div><div>Recurse with base case; mark visited; return value up (postorder) or pass state down. <b>Number of Islands, Max Depth, Validate BST, Lowest Common Ancestor, Path Sum, Clone Graph, Invert Tree</b></div></div><div class="card"><div class="hd"><span class="n">13</span><span class="nm">Backtracking</span><span class="tm">O(2&#8319;) / O(n!)</span></div>
+
+<div class="lb">Use when</div><div>Generate ALL combinations, permutations, subsets, partitions; constraint puzzles</div>
+<div class="lb">Idea &amp; problems</div><div>choose &rarr; recurse &rarr; un-choose; prune early; sort + skip dupes. <b>Subsets, Permutations, Combination Sum, Word Search, N-Queens, Generate Parentheses, Palindrome Partitioning</b></div></div><div class="card"><div class="hd"><span class="n">14</span><span class="nm">Topological sort</span><span class="tm">O(V+E)</span></div>
+
+<div class="lb">Use when</div><div>Dependencies, prerequisites, build order, detect cycle in directed graph</div>
+<div class="lb">Idea &amp; problems</div><div>Kahn: indegree map, queue of zeros; if visited &lt; V &rArr; cycle. <b>Course Schedule I/II, Alien Dictionary, Minimum Height Trees</b></div></div><div class="card"><div class="hd"><span class="n">15</span><span class="nm">Union-Find</span><span class="tm">~O(&alpha;(n))</span></div>
+
+<div class="lb">Use when</div><div>Connected components, merging groups, cycle in undirected graph, dynamic connectivity</div>
+<div class="lb">Idea &amp; problems</div><div>parent[] with path compression + union by rank. <b>Number of Provinces, Redundant Connection, Accounts Merge, Graph Valid Tree</b></div></div><div class="card"><div class="hd"><span class="n">16</span><span class="nm">Dijkstra</span><span class="tm">O(E log V)</span></div>
+<div class="tag">weighted shortest path</div>
+<div class="lb">Use when</div><div>Non-negative edge weights; "min cost/time/effort" path</div>
+<div class="lb">Idea &amp; problems</div><div>Min-heap of (dist,node); skip stale entries. Negative edges or "at most K stops" &rarr; Bellman-Ford. <b>Network Delay Time, Path With Minimum Effort, Cheapest Flights Within K Stops</b></div></div><div class="card"><div class="hd"><span class="n">17</span><span class="nm">Dynamic programming</span><span class="tm">O(states&times;trans)</span></div>
+<div class="tag">1D / 2D / knapsack</div>
+<div class="lb">Use when</div><div>"Min / max / count ways / can we"; overlapping subproblems; choices at each step</div>
+<div class="lb">Idea &amp; problems</div><div>Define <b>state</b>, <b>transition</b>, base, order; then compress space. 1D: <b>Climbing Stairs, House Robber, Coin Change, LIS, Word Break</b> &middot; 2D: <b>LCS, Edit Distance, Unique Paths</b> &middot; Knapsack: <b>Partition Equal Subset Sum, Target Sum</b></div></div><div class="card"><div class="hd"><span class="n">18</span><span class="nm">Greedy</span><span class="tm">O(n log n)</span></div>
+
+<div class="lb">Use when</div><div>Local best is provably global best; sort then sweep; jumps, gas, scheduling</div>
+<div class="lb">Idea &amp; problems</div><div>Sort by the right key; keep running best; prove with an exchange argument. <b>Jump Game I/II, Gas Station, Assign Cookies, Partition Labels, Best Time to Buy/Sell Stock</b></div></div><div class="card"><div class="hd"><span class="n">19</span><span class="nm">Trie</span><span class="tm">O(L)</span></div>
+
+<div class="lb">Use when</div><div>Prefix search, autocomplete, word dictionary, many words on a grid</div>
+<div class="lb">Idea &amp; problems</div><div>Node = dict of children + <code>end</code> flag. <b>Implement Trie, Add &amp; Search Word, Word Search II</b></div></div><div class="card"><div class="hd"><span class="n">20</span><span class="nm">Matrix / grid</span><span class="tm">O(m&middot;n)</span></div>
+
+<div class="lb">Use when</div><div>2D array in place: rotate, spiral, zero rows/cols; neighbors via direction arrays</div>
+<div class="lb">Idea &amp; problems</div><div>Rotate = transpose + reverse rows; spiral = 4 shrinking bounds; <code>dirs=[(1,0),(-1,0),(0,1),(0,-1)]</code>. <b>Rotate Image, Spiral Matrix, Set Matrix Zeroes, Search a 2D Matrix</b></div></div><div class="card"><div class="hd"><span class="n">21</span><span class="nm">Bit manipulation</span><span class="tm">O(n)</span></div>
+<div class="tag">XOR</div>
+<div class="lb">Use when</div><div>Find the odd one out; count bits; power of two; subsets via masks</div>
+<div class="lb">Idea &amp; problems</div><div><code>a^a=0</code>, <code>n&amp;(n-1)</code> clears lowest set bit. <b>Single Number, Missing Number, Number of 1 Bits, Counting Bits</b></div></div><div class="card"><div class="hd"><span class="n">22</span><span class="nm">Cyclic sort</span><span class="tm">O(n)</span></div>
+<div class="tag">values in 1..n</div>
+<div class="lb">Use when</div><div>Array of 1..n; find missing / duplicate in O(1) extra space</div>
+<div class="lb">Idea &amp; problems</div><div>Swap each value to index <code>v-1</code>; scan for mismatch. <b>Find All Duplicates, First Missing Positive, Find the Duplicate Number</b></div></div><div class="card alt"><div class="lb2">Pick between look-alikes</div><div><b>Pick between look-alikes:</b> Window vs prefix sum &mdash; negatives in the array &rArr; prefix sum. &nbsp; BFS vs DFS &mdash; shortest steps &rArr; BFS; explore all / recurse on tree &rArr; DFS. &nbsp; DP vs greedy &mdash; if a local choice can be wrong later &rArr; DP. &nbsp; Heap vs sort &mdash; only need top K &rArr; heap (n log k). &nbsp; Backtracking vs DP &mdash; list every answer &rArr; backtracking; count/optimize &rArr; DP. &nbsp; <b>Interview flow:</b> clarify &rarr; brute force &rarr; pattern &rarr; code &rarr; dry-run on a small case &rarr; complexity.</div></div></body></html>
